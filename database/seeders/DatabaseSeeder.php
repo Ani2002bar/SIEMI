@@ -16,6 +16,7 @@ class DatabaseSeeder extends Seeder
             EquipoSeeder::class,
             ComponenteSeeder::class,
             SubcomponenteSeeder::class,
+            RolesAndPermissionsSeeder::class
         ]);
     }
 }

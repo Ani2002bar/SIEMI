@@ -18,17 +18,17 @@ return new class extends Migration
             $table->string('descripcion', 200);
             $table->string('modelo', 50);
             $table->string('nro_serie', 50);
-            $table->string('observaciones', 200);
-            $table->string('direccion_ip', 50);
-            $table->date('anio_fabricacion');
-            $table->string('estado', 45);
+            $table->string('observaciones', 200)->nullable();
+            $table->string('direccion_ip', 50)->nullable();
+            $table->date('anio_fabricacion')->nullable();
+            $table->enum('estado', ['Activo', 'Inactivo'])->default('Activo');
             $table->string('imagen')->nullable();
-            $table->date('fecha_instalacion');
-            $table->foreignId('empresa_id')->constrained('empresas')->onDelete('cascade');
-            $table->foreignId('modalidades_id')->constrained('modalidades')->onDelete('cascade');
+            $table->date('fecha_instalacion')->nullable();
+            $table->foreignId('empresa_id')->nullable()->constrained('empresas')->onDelete('cascade');
+            $table->foreignId('modalidades_id')->nullable()->constrained('modalidades')->onDelete('cascade');
             $table->foreignId('local_id')->constrained('locals')->onDelete('cascade');
-            $table->foreignId('departamento_id')->nullable()->constrained('departamentos')->onDelete('cascade'); // Relación con Departamento
-            $table->foreignId('subdepartamento_id')->nullable()->constrained('subdepartamentos')->onDelete('cascade'); // Relación con Sub-departamento
+            $table->foreignId('departamento_id')->nullable()->constrained('departamentos')->onDelete('cascade');
+            $table->foreignId('subdepartamento_id')->nullable()->constrained('subdepartamentos')->onDelete('cascade');
             $table->timestamps();
         });
     }

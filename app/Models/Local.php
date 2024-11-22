@@ -26,4 +26,14 @@ class Local extends Model
     {
         return $this->hasMany(Empresa::class);
     }
+    public function departamentos()
+{
+    return $this->hasMany(Departamento::class);
+}
+
+public function subdepartamentos()
+{
+    return $this->hasManyThrough(SubDepartamento::class, Departamento::class);
+}
+
 }

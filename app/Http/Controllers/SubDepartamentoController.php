@@ -93,6 +93,10 @@ class SubDepartamentoController extends Controller
     $subdepartamentos = SubDepartamento::where('departamento_id', $departamentoId)->pluck('nombre', 'id');
     return response()->json($subdepartamentos);
 }
+public function getAll()
+{
+    return SubDepartamento::with('departamento')->get();
+}
 
 }
 

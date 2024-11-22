@@ -3,18 +3,14 @@
 @section('title', 'Crear Local')
 
 @push('css')
-<link href="https://cdn.jsdelivr.net/npm/simple-datatables@latest/dist/style.css" rel="stylesheet" type="text/css">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-    .preview-image {
-        max-width: 300px;
-        height: auto;
-        border-radius: 5px;
-        border: 1px solid #ddd;
-        display: none; /* Oculta la imagen al inicio */
+    .list-group-item {
+        cursor: pointer;
     }
-    .btn-remove-image {
-        display: none; /* Oculta el botón al inicio */
-        margin-top: 10px;
+    .list-group-item.active {
+        background-color: #007bff;
+        color: white;
     }
 </style>
 @endpush
@@ -33,6 +29,7 @@
             @csrf
             <div class="card-body">
                 <div class="row g-4">
+                    <!-- Nombre del Local -->
                     <div class="col-md-6">
                         <label for="nombre_local" class="form-label">Nombre del Local:</label>
                         <input type="text" name="nombre_local" id="nombre_local" class="form-control" value="{{ old('nombre_local') }}" required>
@@ -41,6 +38,7 @@
                         @enderror
                     </div>
 
+                    <!-- Dirección -->
                     <div class="col-md-6">
                         <label for="direccion" class="form-label">Dirección:</label>
                         <input type="text" name="direccion" id="direccion" class="form-control" value="{{ old('direccion') }}" required>
@@ -49,67 +47,80 @@
                         @enderror
                     </div>
 
+                    <!-- Departamentos -->
                     <div class="col-md-6">
-                        <label for="direccion_ip" class="form-label">Dirección IP:</label>
-                        <input type="text" name="direccion_ip" id="direccion_ip" class="form-control" value="{{ old('direccion_ip') }}">
-                        @error('direccion_ip')
-                        <small class="text-danger">{{ '*' . $message }}</small>
-                        @enderror
+                        <label class="form-label">Departamentos:</label><br>
+                        <button type="button" class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#departamentosModal">
+                            Agregar Departamentos
+                        </button>
+                        <!-- Mostrar los departamentos seleccionados temporalmente -->
+                        <ul class="list-group mt-2" id="departamentosTemporales">
+                            <!-- Los departamentos creados aparecerán aquí -->
+                        </ul>
                     </div>
 
-                    <div class="col-md-6">
-                        <label for="telefono" class="form-label">Teléfono:</label>
-                        <input type="text" name="telefono" id="telefono" class="form-control" value="{{ old('telefono') }}">
-                        @error('telefono')
-                        <small class="text-danger">{{ '*' . $message }}</small>
-                        @enderror
-                    </div>
-
-                    <div class="col-md-6">
-                        <label for="imagen" class="form-label">Imagen (Opcional):</label>
-                        <input type="file" name="imagen" id="imagen" class="form-control" accept="image/*" onchange="previewImage(event)">
-                        @error('imagen')
-                        <small class="text-danger">{{ '*' . $message }}</small>
-                        @enderror
-                        <!-- Vista previa de la imagen seleccionada -->
-                        <div class="mt-3">
-                            <img id="image-preview" src="#" alt="Vista previa de la imagen" class="preview-image">
-                            <button type="button" class="btn btn-secondary btn-sm btn-remove-image" onclick="removeImage()">Eliminar imagen</button>
-                        </div>
-                    </div>
+                    <!-- Campo oculto para enviar los departamentos -->
+                    <input type="hidden" name="departamentos" id="departamentos">
                 </div>
             </div>
             <div class="card-footer text-center">
                 <button type="submit" class="btn btn-primary">Guardar</button>
+                <a href="{{ route('locals.index') }}" class="btn btn-danger">Cancelar</a>
             </div>
         </form>
     </div>
 </div>
+
+@include('locals.departamentosModal')
+
 @endsection
 
 @push('js')
-<script src="https://cdn.jsdelivr.net/npm/simple-datatables@latest" type="text/javascript"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    // Función para mostrar la vista previa de la imagen seleccionada y el botón de eliminación
-    function previewImage(event) {
-        const imagePreview = document.getElementById('image-preview');
-        const removeButton = document.querySelector('.btn-remove-image');
-        
-        imagePreview.src = URL.createObjectURL(event.target.files[0]);
-        imagePreview.style.display = 'block';
-        removeButton.style.display = 'inline-block';
+    let departamentos = [];
+
+    function agregarDepartamento() {
+        const nombre = document.getElementById('nuevo_departamento_nombre').value;
+        const descripcion = document.getElementById('nuevo_departamento_descripcion').value;
+
+        if (nombre.trim() === '') {
+            alert('El nombre del departamento es obligatorio.');
+            return;
+        }
+
+        const nuevoDepartamento = { nombre, descripcion };
+        departamentos.push(nuevoDepartamento);
+
+        actualizarListadoTemporal();
+        document.getElementById('nuevoDepartamentoForm').reset();
     }
 
-    // Función para eliminar la imagen seleccionada y restablecer el campo de archivo
-    function removeImage() {
-        const imageInput = document.getElementById('imagen');
-        const imagePreview = document.getElementById('image-preview');
-        const removeButton = document.querySelector('.btn-remove-image');
+    function actualizarListadoTemporal() {
+        const lista = document.getElementById('departamentosTemporales');
+        lista.innerHTML = '';
 
-        imageInput.value = ''; // Limpia el campo de archivo
-        imagePreview.style.display = 'none';
-        removeButton.style.display = 'none';
+        departamentos.forEach((dep, index) => {
+            const li = document.createElement('li');
+            li.className = 'list-group-item d-flex justify-content-between align-items-center';
+            li.textContent = dep.nombre;
+
+            const btnEliminar = document.createElement('button');
+            btnEliminar.className = 'btn btn-sm btn-danger';
+            btnEliminar.textContent = 'Eliminar';
+            btnEliminar.onclick = () => eliminarDepartamento(index);
+
+            li.appendChild(btnEliminar);
+            lista.appendChild(li);
+        });
+
+        // Actualizar campo oculto con los departamentos
+        document.getElementById('departamentos').value = JSON.stringify(departamentos);
+    }
+
+    function eliminarDepartamento(index) {
+        departamentos.splice(index, 1);
+        actualizarListadoTemporal();
     }
 </script>
 @endpush
