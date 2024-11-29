@@ -58,18 +58,16 @@
     </a>
 </div>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Subdepartamentos</h6>
-    </div>
+    
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered table-striped fs-6" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Nombre</th>
+                    <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Departamento</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -78,20 +76,20 @@
                         <td>{{ $subdepartamento->nombre }}</td>
                         <td>{{ $subdepartamento->descripcion }}</td>
                         <td>{{ $subdepartamento->departamento->nombre }}</td>
-                        <td>
+                        <td class="text-center">
                             <div class="action-buttons">
                                 <!-- Botón Detalles -->
-                                <a href="{{ route('subdepartamentos.show', $subdepartamento->id) }}" class="btn btn-warning btn-sm">
+                                <a href="{{ route('subdepartamentos.show', $subdepartamento->id) }}" class="btn-detalles">
                                     <i class="fas fa-info-circle"></i> Detalles
                                 </a>
 
                                 <!-- Botón Editar -->
-                                <a href="{{ route('subdepartamentos.edit', $subdepartamento->id) }}" class="btn btn-info btn-sm">
+                                <a href="{{ route('subdepartamentos.edit', $subdepartamento->id) }}" class="btn-editar">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
 
                                 <!-- Botón Eliminar con Modal -->
-                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $subdepartamento->id }})">
+                                <button type="button" class="btn-eliminar" onclick="confirmDelete({{ $subdepartamento->id }})">
                                     <i class="fas fa-trash-alt"></i> Eliminar
                                 </button>
                             </div>

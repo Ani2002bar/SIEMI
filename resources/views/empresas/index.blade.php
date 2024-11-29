@@ -11,6 +11,7 @@
             justify-content: space-around;
             align-items: center;
         }
+
         .action-buttons .btn {
             border-radius: 5px;
             padding: 6px 12px;
@@ -57,9 +58,7 @@
     </a>
 </div>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Empresas</h6>
-    </div>
+
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered table-striped fs-6" id="dataTable" width="100%" cellspacing="0">
@@ -68,30 +67,35 @@
                         <th>Nombre</th>
                         <th>Dirección</th>
                         <th>Teléfono</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                @foreach ($empresas as $empresa)
-                    <tr>
-                        <td>{{ $empresa->nombre }}</td>
-                        <td>{{ $empresa->direccion }}</td>
-                        <td>{{ $empresa->telefono }}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <a href="{{ route('empresas.show', $empresa->id) }}" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-info-circle"></i> Detalles
-                                </a>
-                                <a href="{{ route('empresas.edit', $empresa->id) }}" class="btn btn-info btn-sm">
-                                    <i class="fas fa-edit"></i> Editar
-                                </a>
-                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $empresa->id }})">
-                                    <i class="fas fa-trash-alt"></i> Eliminar
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                @endforeach
+                    @foreach ($empresas as $empresa)
+                        <tr>
+                            <td>{{ $empresa->nombre }}</td>
+                            <td>{{ $empresa->direccion }}</td>
+                            <td>{{ $empresa->telefono }}</td>
+                            <td class="text-center">
+                                <div class="action-buttons">
+                                    <!-- Botón Detalles -->
+                                    <a href="{{ route('empresas.show', $empresa->id) }}" class="btn-detalles">
+                                        <i class="fas fa-info-circle"></i> Detalles
+                                    </a>
+
+                                    <!-- Botón Editar -->
+                                    <a href="{{ route('empresas.edit', $empresa->id) }}" class="btn-editar">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
+
+                                    <!-- Botón Eliminar con Modal -->
+                                    <button type="button" class="btn-eliminar" onclick="confirmDelete({{ $empresa->id }})">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
@@ -128,7 +132,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             var pageLength = localStorage.getItem('datatable_pageLength') || 10;
 
             var table = $('#dataTable').DataTable({
@@ -152,7 +156,7 @@
                 }
             });
 
-            table.on('length.dt', function(e, settings, len) {
+            table.on('length.dt', function (e, settings, len) {
                 localStorage.setItem('datatable_pageLength', len);
             });
         });

@@ -61,7 +61,7 @@
 
     .table-sections {
         display: grid;
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: 1fr 1fr 1fr;
         gap: 15px;
         margin-top: 30px;
     }
@@ -75,28 +75,11 @@
         flex-direction: column;
     }
 
-    .table-title-container {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 10px;
-    }
-
     .table-title {
         font-weight: bold;
         color: #4e73df;
         font-size: 1em;
-    }
-
-    .search-bar {
-        width: 50%;
-    }
-
-    .search-bar input {
-        width: 100%;
-        padding: 5px;
-        border-radius: 5px;
-        border: 1px solid #e0e0e0;
+        margin-bottom: 10px;
     }
 
     .table-responsive {
@@ -108,6 +91,7 @@
         width: 100%;
         background-color: white;
         border-radius: 5px;
+        border-collapse: collapse;
     }
 
     .table-style th, .table-style td {
@@ -127,7 +111,7 @@
     }
 
     .buttons-container {
-        grid-column: span 2;
+        grid-column: span 3;
         display: flex;
         justify-content: center;
         gap: 15px;
@@ -146,11 +130,12 @@
     </ol>
 
     <div class="detail-container">
-        <!-- Primera columna con la imagen y algunos detalles -->
         <div class="detail-info">
             <div class="detail-image-container">
                 <img src="{{ $local->imagen ? asset('storage/' . $local->imagen) : asset('img/placeholder.png') }}" alt="Imagen del Local" class="detail-image">
             </div>
+        </div>
+        <div class="detail-info">
             <div class="detail-item">
                 <label>Nombre del Local:</label>
                 <p>{{ $local->nombre_local }}</p>
@@ -167,14 +152,6 @@
                 <label>Dirección IP:</label>
                 <p>{{ $local->direccion_ip ?? 'No especificado' }}</p>
             </div>
-        </div>
-
-        <!-- Segunda columna con el resto de la información -->
-        <div class="detail-info">
-            <div class="detail-item">
-                <label>Fecha de Creación:</label>
-                <p>{{ $local->created_at->format('d-m-Y') }}</p>
-            </div>
             <div class="detail-item">
                 <label>Última Actualización:</label>
                 <p>{{ $local->updated_at->format('d-m-Y') }}</p>
@@ -182,12 +159,37 @@
         </div>
     </div>
 
-    <!-- Tablas en secciones separadas para departamentos y subdepartamentos -->
     <div class="table-sections">
+        <!-- Sección Empresas -->
         <div class="table-section">
-            <div class="table-title-container">
-                <div class="table-title">Departamentos</div>
+            <div class="table-title">Empresas Asociadas</div>
+            <div class="table-responsive">
+                <table class="table-style">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Dirección</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @forelse ($local->empresas as $empresa)
+                            <tr>
+                                <td>{{ $empresa->nombre }}</td>
+                                <td>{{ $empresa->direccion }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="2">No hay empresas asociadas</td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                </table>
             </div>
+        </div>
+
+        <!-- Sección Departamentos -->
+        <div class="table-section">
+            <div class="table-title">Departamentos Asociados</div>
             <div class="table-responsive">
                 <table class="table-style">
                     <thead>
@@ -197,45 +199,51 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($local->departamentos as $departamento)
+                        @forelse ($local->departamentos as $departamento)
                             <tr>
                                 <td>{{ $departamento->nombre }}</td>
                                 <td>{{ $departamento->descripcion ?? 'No especificada' }}</td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="2">No hay departamentos asociados</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
 
+        <!-- Sección Subdepartamentos -->
         <div class="table-section">
-            <div class="table-title-container">
-                <div class="table-title">Subdepartamentos</div>
-            </div>
+            <div class="table-title">Subdepartamentos Asociados</div>
             <div class="table-responsive">
                 <table class="table-style">
                     <thead>
                         <tr>
-                            <th>Nombre</th>
+                            <th>Subdepartamento</th>
                             <th>Departamento</th>
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($local->departamentos as $departamento)
+                        @forelse ($local->departamentos as $departamento)
                             @foreach ($departamento->subdepartamentos as $subdepartamento)
                                 <tr>
                                     <td>{{ $subdepartamento->nombre }}</td>
                                     <td>{{ $departamento->nombre }}</td>
                                 </tr>
                             @endforeach
-                        @endforeach
+                        @empty
+                            <tr>
+                                <td colspan="2">No hay subdepartamentos asociados</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
 
-    <!-- Botones de navegación -->
     <div class="buttons-container">
         <a href="{{ route('locals.index') }}" class="btn btn-primary">Volver</a>
         <a href="{{ route('locals.edit', $local->id) }}" class="btn btn-warning">Editar</a>

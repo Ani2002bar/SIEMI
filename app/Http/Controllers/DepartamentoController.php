@@ -71,11 +71,28 @@ class DepartamentoController extends Controller
      * Muestra el formulario para editar un departamento existente.
      */
     public function edit($id)
-    {
-        $departamento = Departamento::findOrFail($id);
-        $locals = Local::all();
-        return view('departamentos.edit', compact('departamento', 'locals'));
-    }
+{
+    // Cargar el local junto con sus departamentos y subdepartamentos
+    $local = Local::with(['departamentos.subdepartamentos'])->findOrFail($id);
+
+    // Convertir los departamentos y subdepartamentos a formato JSON para usarlos en el frontend
+    $departamentos = $local->departamentos->map(function ($departamento) {
+        return [
+            'id' => $departamento->id,
+            'nombre' => $departamento->nombre,
+            'descripcion' => $departamento->descripcion,
+            'subdepartamentos' => $departamento->subdepartamentos->map(function ($subdepartamento) {
+                return [
+                    'id' => $subdepartamento->id,
+                    'nombre' => $subdepartamento->nombre,
+                    'descripcion' => $subdepartamento->descripcion,
+                ];
+            }),
+        ];
+    });
+
+    return view('locals.edit', compact('local', 'departamentos'));
+}
 
     /**
      * Actualiza un departamento específico en la base de datos.

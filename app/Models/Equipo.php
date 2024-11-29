@@ -31,7 +31,7 @@ class Equipo extends Model
         return $this->belongsTo(Empresa::class);
     }
 
-    public function locale()
+    public function locals()
     {
         return $this->belongsTo(Local::class, 'local_id');
     }

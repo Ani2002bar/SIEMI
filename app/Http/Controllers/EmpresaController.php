@@ -23,25 +23,39 @@ class EmpresaController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
+        $isAjax = $request->ajax();
+
+        $validated = $request->validate([
             'nombre' => 'required|string|max:45',
             'direccion' => 'required|string|max:200',
             'direccion_ip' => 'required|string|max:45',
             'telefono' => 'nullable|string|max:20',
-            'local_id' => 'required|exists:locals,id',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048'
+            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $data = $request->all();
-
         if ($request->hasFile('imagen')) {
-            $data['imagen'] = $request->file('imagen')->store('imagenes_empresas', 'public');
+            $validated['imagen'] = $request->file('imagen')->store('imagenes_empresas', 'public');
         }
 
-        Empresa::create($data);
+        $empresa = Empresa::create($validated);
 
-        return redirect()->route('empresas.index')->with('success', 'Empresa creada exitosamente.');
+        if ($isAjax) {
+            return response()->json([
+                'id' => $empresa->id,
+                'nombre' => $empresa->nombre,
+                'direccion' => $empresa->direccion,
+            ], 201);
+        } else {
+            return redirect()->route('empresas.index')->with('success', 'Empresa creada exitosamente.');
+        }
     }
+
+    public function getExistingEmpresas()
+    {
+        $empresas = Empresa::select('id', 'nombre', 'direccion')->get();
+        return response()->json($empresas);
+    }
+
 
     public function edit(Empresa $empresa)
     {

@@ -37,11 +37,11 @@ class SubDepartamentoController extends Controller
             'departamento_id' => 'required|exists:departamentos,id',
         ]);
 
-        SubDepartamento::create($request->all());
+        $subdepartamento = SubDepartamento::create($request->all());
 
-        return redirect()->route('subdepartamentos.index')->with('success', 'Subdepartamento creado exitosamente.');
+        return response()->json(['success' => true, 'subdepartamento' => $subdepartamento]);
     }
-
+    
     /**
      * Muestra los detalles de un subdepartamento específico.
      */

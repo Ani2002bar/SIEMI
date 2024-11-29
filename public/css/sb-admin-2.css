@@ -6491,7 +6491,7 @@ button.bg-dark:focus {
 }
 
 .bg-white {
-  background-color: #fff !important;
+  background-color: #ecf5f1 !important;
 }
 
 .bg-transparent {
@@ -9900,8 +9900,8 @@ a:focus {
 }
 
 .bg-gradient-primary {
-  background-color: #4e73df;
-  background-image: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+  background-color: #24af6f;
+  background-image: linear-gradient(95deg, #11452d 10%, #112f24 100%);
   background-size: cover;
 }
 
@@ -11278,4 +11278,144 @@ footer.sticky-footer .copyright {
 
 body.sidebar-toggled footer.sticky-footer {
   width: 100%;
+}
+
+
+
+/* Header general */
+.navbar.bg-white {
+  background-color: #11452d !important; /* Fondo verde oscuro */
+  border-bottom: 2px solid #112f24; /* Línea inferior */
+}
+
+/* Input del buscador */
+.navbar .navbar-search .form-control {
+    background-color: #ecf5f1 !important; /* Fondo claro */
+    color: #0f1613 !important; /* Texto oscuro */
+    border: 1px solid #d1e7dd; /* Borde claro */
+    border-right: none; /* Elimina borde derecho del input */
+    border-radius: 5px 0 0 5px; /* Bordes redondeados a la izquierda */
+}
+
+/* Botón del buscador */
+.navbar .navbar-search .btn-primary {
+    background-color: #0f1613 !important; /* Fondo oscuro */
+    color: #ffffff !important; /* Texto blanco */
+    border: 1px solid #0f1613; /* Borde del mismo color */
+    border-radius: 0 5px 5px 0; /* Bordes redondeados a la derecha */
+}
+
+.navbar .navbar-search .btn-primary:hover {
+    background-color: #0d1412 !important; /* Más oscuro en hover */
+    border-color: #0d1412 !important;
+}
+
+/* Íconos del header */
+.navbar .nav-link {
+    color: #ecf5f1 !important; /* Verde claro para íconos y texto */
+}
+
+.navbar .nav-link:hover {
+    color: #ffffff !important; /* Blanco puro al pasar el mouse */
+}
+
+/* Dropdown del usuario */
+.navbar .dropdown-menu {
+    background-color: #ecf5f1 !important; /* Fondo claro */
+    border: 1px solid #d1e7dd; /* Borde claro */
+    border-radius: 5px; /* Bordes redondeados */
+}
+
+.navbar .dropdown-menu .dropdown-item {
+    color: #0f1613 !important; /* Texto oscuro */
+}
+
+.navbar .dropdown-menu .dropdown-item:hover {
+    background-color: #d1e7dd !important; /* Fondo más claro */
+    color: #0d1412 !important; /* Texto aún más oscuro */
+}
+
+/* Estilo actualizado para los botones .btn-primary */
+.btn-primary {
+    background: linear-gradient(95deg, #1b3a34, #112f24); /* Paleta de colores actual */
+    border: none;
+    color: #ffffff; /* Texto blanco para contraste */
+    padding: 8px 15px; /* Tamaño compacto */
+    border-radius: 4px; /* Esquinas ligeramente redondeadas */
+    font-size: 13px; /* Fuente más pequeña */
+    font-weight: 500; /* Peso intermedio para el texto */
+    text-transform: none; /* Sin transformación de texto */
+    transition: background 0.3s ease, transform 0.2s ease; /* Transición suave */
+}
+
+.btn-primary:hover {
+    background: linear-gradient(95deg, #112f24, #11452d); /* Colores invertidos al hacer hover */
+    transform: translateY(-1px); /* Elevación ligera */
+}
+
+.btn-primary:focus {
+    outline: none;
+    box-shadow: 0 0 5px rgba(17, 69, 45, 0.5); /* Resplandor sutil al hacer foco */
+}
+
+.btn-primary:active {
+    background: #11452d; /* Color más oscuro para efecto de clic */
+    transform: translateY(0); /* Botón "hundido" al presionarlo */
+}
+
+/* Botón Detalles */
+.btn-detalles {
+  background: linear-gradient(95deg, #4e73df, #375ab7); /* Azul suave con degradado */
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-detalles:hover {
+  background: linear-gradient(95deg, #375ab7, #4e73df); /* Inversión del degradado */
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
+}
+
+/* Botón Editar */
+.btn-editar {
+  background: linear-gradient(95deg, #1cc88a, #17a673); /* Verde suave con degradado */
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-editar:hover {
+  background: linear-gradient(95deg, #17a673, #1cc88a);
+  
+  transform: translateY(-1px);
+}
+
+/* Botón Eliminar */
+.btn-eliminar {
+  background: linear-gradient(95deg, #e74a3b, #c0392b); /* Rojo suave con degradado */
+  border: none;
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.btn-eliminar:hover {
+  background: linear-gradient(95deg, #c0392b, #e74a3b);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
+  transform: translateY(-1px);
 }

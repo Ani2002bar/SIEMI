@@ -9,13 +9,18 @@
         /* Ajuste de botones en la tabla de acciones */
         .action-buttons {
             display: flex;
-            justify-content: space-around; /* Espacio entre los botones */
+            justify-content: space-around;
+            /* Espacio entre los botones */
             align-items: center;
         }
+
         .action-buttons .btn {
-            border-radius: 5px; /* Bordes redondeados */
-            padding: 6px 12px; /* Ajuste de tamaño */
-            margin: 0 3px; /* Espacio entre botones */
+            border-radius: 5px;
+            /* Bordes redondeados */
+            padding: 6px 12px;
+            /* Ajuste de tamaño */
+            margin: 0 3px;
+            /* Espacio entre botones */
         }
     </style>
 @endpush
@@ -58,9 +63,7 @@
     </a>
 </div>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Locales</h6>
-    </div>
+    
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered table-striped fs-6" id="dataTable" width="100%" cellspacing="0">
@@ -69,35 +72,38 @@
                         <th>Nombre</th>
                         <th>Dirección</th>
                         <th>Teléfono</th>
-                        <th>Acciones</th>
+                        <th>Dirección IP</th>
+                        <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                @foreach ($locals as $local)
-                    <tr>
-                        <td>{{ $local->nombre_local }}</td>
-                        <td>{{ $local->direccion }}</td>
-                        <td>{{ $local->telefono }}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <!-- Botón Detalles -->
-                                <a href="{{ route('locals.show', $local->id) }}" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-info-circle"></i> Detalles
-                                </a>
+                    @foreach ($locals as $local)
+                        <tr>
+                            <td>{{ $local->nombre_local }}</td>
+                            <td>{{ $local->direccion }}</td>
+                            <td>{{ $local->telefono }}</td>
+                            <td>{{ $local->direccion_ip}}</td>
+                            <td>
+                                <div class="action-buttons">
+                                    <!-- Botón Detalles -->
+                                    <a href="{{ route('locals.show', $local->id) }}" class="btn-detalles btn-sm">
+                                        <i class="fas fa-info-circle"></i> Detalles
+                                    </a>
 
-                                <!-- Botón Editar -->
-                                <a href="{{ route('locals.edit', $local->id) }}" class="btn btn-info btn-sm">
-                                    <i class="fas fa-edit"></i> Editar
-                                </a>
+                                    <!-- Botón Editar -->
+                                    <a href="{{ route('locals.edit', $local->id) }}" class="btn-editar btn-sm">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
 
-                                <!-- Botón Eliminar con Modal -->
-                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $local->id }})">
-                                    <i class="fas fa-trash-alt"></i> Eliminar
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                @endforeach
+                                    <!-- Botón Eliminar con Modal -->
+                                    <button type="button" class="btn-eliminar btn-sm"
+                                        onclick="confirmDelete({{ $local->id }})">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
@@ -111,7 +117,7 @@
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteModalLabel">Mensaje de confirmación</h5>
                 <!-- Botón de cierre en Bootstrap 4 -->
-                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar"> 
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
@@ -141,7 +147,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             var pageLength = localStorage.getItem('datatable_pageLength') || 10;
 
             var table = $('#dataTable').DataTable({
@@ -165,7 +171,7 @@
                 }
             });
 
-            table.on('length.dt', function(e, settings, len) {
+            table.on('length.dt', function (e, settings, len) {
                 localStorage.setItem('datatable_pageLength', len);
             });
         });

@@ -33,17 +33,6 @@ Route::post('/logout', [LoginController::class, 'logout'])->name('login.logout')
 
 // Rutas protegidas para roles específicos
 Route::middleware(['auth', 'role:Administrador'])->group(function () {
-    // Rutas para administradores
-    Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
-    Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
-    Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
-
-    // Gestión de usuarios y permisos solo para administradores
-    Route::get('/roles', function () {
-        return view('roles.index');
-    })->name('roles.index');
-
-    // Gestión de usuarios
     Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
     Route::get('/users/create', [UserManagementController::class, 'create'])->name('users.create');
     Route::post('/users', [UserManagementController::class, 'store'])->name('users.store');
@@ -88,19 +77,13 @@ Route::resource('subcomponentes', SubComponenteController::class);
 Route::resource('tecnicos', TecnicoController::class);
 
 // API para cargar departamentos y subdepartamentos dinámicamente
-Route::get('/api/departamentos/{localId}', [DepartamentoController::class, 'getDepartamentos'])->name('api.departamentos.local');
-Route::get('/api/subdepartamentos/{departamentoId}', [SubDepartamentoController::class, 'getSubdepartamentos'])->name('api.subdepartamentos.departamento');
-
-// API Genérica
-
-Route::get('/api/subdepartamentos', [SubDepartamentoController::class, 'getAll'])->name('api.subdepartamentos.all');
+Route::post('/api/departamentos', [DepartamentoController::class, 'store'])->name('api.departamentos.store');
 Route::post('/api/subdepartamentos', [SubDepartamentoController::class, 'store'])->name('api.subdepartamentos.store');
+Route::get('/api/subdepartamentos/{departamentoId}', [SubDepartamentoController::class, 'getSubdepartamentos'])->name('api.subdepartamentos.get');
 
+// API para cargar departamentos por local
+Route::get('/api/departamentos/{localId}', [DepartamentoController::class, 'getDepartamentos'])->name('api.departamentos.local');
 
-
-// Generación de PDF para mantenimientos
-Route::get('/mantenimientos/{id}/pdf', [MantenimientoController::class, 'generatePDF'])->name('mantenimientos.pdf');
-// API para crear y obtener departamentos
-Route::get('/api/departamentos', [DepartamentoController::class, 'getDepartamentosDisponibles']);
-Route::post('/api/departamentos', [DepartamentoController::class, 'storeFromModal']);
-Route::post('/locals/store', [LocalController::class, 'store'])->name('locals.store');
+Route::post('/api/empresas/store', [EmpresaController::class, 'store'])->name('empresas.store');
+Route::delete('/api/empresas/{empresa}', [EmpresaController::class, 'destroy'])->name('empresas.destroy');
+Route::get('/api/empresas', [EmpresaController::class, 'getExistingEmpresas'])->name('api.empresas.get');

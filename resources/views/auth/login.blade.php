@@ -27,6 +27,35 @@
             background-size: cover;
             background-position: center;
         }
+        .form-control {
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          padding: 10px;
+        }
+        .btn-primary {
+          background-color: #4CAF50;
+          color: #fff;
+          padding: 10px 20px;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+        }
+        .btn-primary {
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+          color: #333;
+          font-weight: bold;
+          font-size: 24px;
+          margin-bottom: 20px;
+        }
+        .form-control {
+          margin-bottom: 20px;
+        }
+
+
+
+
     </style>
 </head>
 
@@ -103,6 +132,25 @@
     <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
     <script src="{{ asset('vendor/jquery-easing/jquery.easing.min.js') }}"></script>
     <script src="{{ asset('js/sb-admin-2.min.js') }}"></script>
+    <style>
+    .bg-gradient-custom {
+        background: linear-gradient(95deg, #11452d 10%, #1b3a34 50%, #112f24 100%);
+        color: #ffffff;
+    }
+
+    .btn-primary {
+        background: linear-gradient(95deg, #1b3a34, #112f24);
+        border: none;
+        color: #ffffff;
+        transition: background 0.3s ease, transform 0.2s ease;
+    }
+
+    .btn-primary:hover {
+        background: linear-gradient(95deg, #112f24, #11452d);
+        transform: translateY(-2px);
+    }
+</style>
+
 </body>
 
 </html>

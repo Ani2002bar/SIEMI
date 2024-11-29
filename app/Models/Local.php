@@ -17,6 +17,7 @@ class Local extends Model
         'imagen'    // Campo para la imagen
     ];
 
+
     public function equipos()
     {
         return $this->hasMany(Equipo::class);
@@ -24,8 +25,9 @@ class Local extends Model
 
     public function empresas()
     {
-        return $this->hasMany(Empresa::class);
+        return $this->belongsToMany(Empresa::class, 'empresa_local', 'local_id', 'empresa_id');
     }
+    
     public function departamentos()
 {
     return $this->hasMany(Departamento::class);

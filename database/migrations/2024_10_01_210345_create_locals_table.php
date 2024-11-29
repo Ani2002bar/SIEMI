@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('locals', function (Blueprint $table) {
             $table->id();
             $table->string('direccion', 255); 
-            $table->string('direccion_ip', 45); 
+            $table->string('direccion_ip', 45)->nullable();
             $table->string('nombre_local', 45);
             $table->string('telefono', 20)->nullable(); // Campo para el número de teléfono
             $table->string('imagen')->nullable(); // Campo para almacenar la URL o ruta de la imagen

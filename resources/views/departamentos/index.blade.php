@@ -11,6 +11,7 @@
             justify-content: space-around;
             align-items: center;
         }
+
         .action-buttons .btn {
             border-radius: 5px;
             padding: 6px 12px;
@@ -57,9 +58,6 @@
     </a>
 </div>
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">Departamentos</h6>
-    </div>
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered table-striped fs-6" id="dataTable" width="100%" cellspacing="0">
@@ -68,30 +66,36 @@
                         <th>Nombre</th>
                         <th>Descripción</th>
                         <th>Local Asociado</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                @foreach ($departamentos as $departamento)
-                    <tr>
-                        <td>{{ $departamento->nombre }}</td>
-                        <td>{{ $departamento->descripcion }}</td>
-                        <td>{{ $departamento->local->nombre_local }}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <a href="{{ route('departamentos.show', $departamento->id) }}" class="btn btn-warning btn-sm">
-                                    <i class="fas fa-info-circle"></i> Detalles
-                                </a>
-                                <a href="{{ route('departamentos.edit', $departamento->id) }}" class="btn btn-info btn-sm">
-                                    <i class="fas fa-edit"></i> Editar
-                                </a>
-                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $departamento->id }})">
-                                    <i class="fas fa-trash-alt"></i> Eliminar
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                @endforeach
+                    @foreach ($departamentos as $departamento)
+                        <tr>
+                            <td>{{ $departamento->nombre }}</td>
+                            <td>{{ $departamento->descripcion }}</td>
+                            <td>{{ $departamento->local->nombre_local }}</td>
+                            <td class="text-center">
+                                <div class="action-buttons">
+                                    <!-- Botón Detalles -->
+                                    <a href="{{ route('departamentos.show', $departamento->id) }}" class="btn-detalles">
+                                        <i class="fas fa-info-circle"></i> Detalles
+                                    </a>
+
+                                    <!-- Botón Editar -->
+                                    <a href="{{ route('departamentos.edit', $departamento->id) }}" class="btn-editar">
+                                        <i class="fas fa-edit"></i> Editar
+                                    </a>
+
+                                    <!-- Botón Eliminar con Modal -->
+                                    <button type="button" class="btn-eliminar"
+                                        onclick="confirmDelete({{ $departamento->id }})">
+                                        <i class="fas fa-trash-alt"></i> Eliminar
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    @endforeach
                 </tbody>
             </table>
         </div>
@@ -131,7 +135,7 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
             var pageLength = localStorage.getItem('datatable_pageLength') || 10;
 
             var table = $('#dataTable').DataTable({
@@ -155,7 +159,7 @@
                 }
             });
 
-            table.on('length.dt', function(e, settings, len) {
+            table.on('length.dt', function (e, settings, len) {
                 localStorage.setItem('datatable_pageLength', len);
             });
         });

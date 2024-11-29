@@ -23,8 +23,8 @@ class Empresa extends Model
         return $this->hasMany(Equipo::class);
     }
 
-    public function local()
-    {
-        return $this->belongsTo(Local::class);
-    }
+    public function locals()
+{
+    return $this->belongsToMany(Local::class, 'empresa_local', 'empresa_id', 'local_id');
+}
 }
