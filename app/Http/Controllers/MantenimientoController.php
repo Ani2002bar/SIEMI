@@ -22,33 +22,34 @@ class MantenimientoController extends Controller
         return view('mantenimientos.index', compact('mantenimientos'));
     }
 
-    // Mostrar formulario para crear mantenimiento
+    /**
+     * Show the form for creating a new maintenance record.
+     */
     public function create()
     {
         $tecnicos = Tecnico::all();
         $locals = Local::all();
         $equipos = Equipo::all();
-        $repuestos = Repuesto::all();
-        $componentes = Componente::all();
-        $subcomponentes = Subcomponente::all();
 
-        return view('mantenimientos.create', compact('tecnicos', 'locals', 'equipos', 'repuestos', 'componentes', 'subcomponentes'));
+        // States for the maintenance status
+        $estados = ['pendiente' => 'Pendiente', 'finalizado' => 'Finalizado'];
+
+        return view('mantenimientos.create', compact('tecnicos', 'locals', 'equipos', 'estados'));
     }
 
-    // Guardar mantenimiento en la base de datos
+    /**
+     * Store a new maintenance record in the database.
+     */
     public function store(Request $request)
     {
         $request->validate([
             'costo_reparacion' => 'required|numeric|min:0',
-            'estado' => 'required|string|max:100',
+            'estado' => 'required|in:pendiente,finalizado',
             'fecha' => 'required|date',
             'observaciones' => 'nullable|string|max:200',
             'tecnico_id' => 'required|exists:tecnicos,id',
             'local_id' => 'required|exists:locals,id',
             'equipo_id' => 'required|exists:equipos,id',
-            'repuesto_id' => 'nullable|exists:repuestos,id',
-            'componente_id' => 'nullable|exists:componentes,id',
-            'subcomponente_id' => 'nullable|exists:subcomponentes,id',
         ]);
 
         Mantenimiento::create($request->all());
@@ -104,15 +105,30 @@ public function show($id)
     $mantenimiento = Mantenimiento::with(['tecnico', 'equipo', 'local'])->findOrFail($id);
     return view('mantenimientos.detail', compact('mantenimiento'));
 }
-
-
 public function generatePdf($id)
 {
-    $mantenimiento = Mantenimiento::with(['local', 'tecnico', 'equipo', 'repuestos'])->findOrFail($id);
+    $mantenimiento = Mantenimiento::with(['local', 'tecnico', 'equipo'])->findOrFail($id);
 
     $pdf = Pdf::loadView('mantenimientos.pdf', compact('mantenimiento'));
     return $pdf->download('Hoja_Intervencion_Tecnica_' . $mantenimiento->id . '.pdf');
 }
+public function calendar()
+{
+    $events = Mantenimiento::select('id', 'estado as title', 'fecha as start', 'observaciones as description')
+        ->get()
+        ->map(function ($mantenimiento) {
+            return [
+                'id' => $mantenimiento->id,
+                'title' => 'Estado: ' . $mantenimiento->title,
+                'start' => $mantenimiento->start,
+                'color' => $mantenimiento->title === 'Activo' ? '#28a745' : '#ffc107',
+                'description' => $mantenimiento->description,
+            ];
+        });
+
+    return view('calendar.index', ['events' => $events]);
+}
+
 
 
 

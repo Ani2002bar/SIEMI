@@ -64,4 +64,24 @@ class ComponenteController extends Controller
         $componente->delete();
         return redirect()->route('componentes.index')->with('success', 'Componente eliminado exitosamente.');
     }
+    
+    public function storeFromModal(Request $request)
+    {
+        $validated = $request->validate([
+            'descripcion' => 'required|string|max:255',
+            'modelo' => 'required|string|max:255',
+            'nro_serie' => 'nullable|string|max:255',
+            'equipo_id' => 'required|exists:equipos,id',
+        ]);
+
+        $componente = Componente::create($validated);
+
+        return response()->json(['success' => true, 'componente' => $componente]);
+    }
+
+    public function getByEquipo($equipoId)
+    {
+        $componentes = Componente::where('equipo_id', $equipoId)->get();
+        return response()->json($componentes);
+    }
 }

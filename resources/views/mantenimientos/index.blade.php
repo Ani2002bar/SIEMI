@@ -66,10 +66,10 @@
                         <th>Técnico</th>
                         <th>Equipo</th>
                         <th>Local</th>
-                        <th>Costo</th>
+                        
                         <th>Estado</th>
                         <th>Fecha</th>
-                        <th>Acciones</th>
+                        <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -78,23 +78,23 @@
                         <td>{{ $mantenimiento->tecnico->nombre }}</td>
                         <td>{{ $mantenimiento->equipo->descripcion }}</td>
                         <td>{{ $mantenimiento->local->nombre_local }}</td>
-                        <td>{{ $mantenimiento->costo_reparacion }}</td>
+                        
                         <td>{{ $mantenimiento->estado }}</td>
                         <td>{{ $mantenimiento->fecha }}</td>
                         <td>
                             <div class="action-buttons">
                                 <!-- Botón Detalles -->
-                                <a href="{{ route('mantenimientos.show', $mantenimiento->id) }}" class="btn btn-warning btn-sm">
+                                <a href="{{ route('mantenimientos.show', $mantenimiento->id) }}" class="btn-detalles btn-sm">
                                     <i class="fas fa-info-circle"></i> Detalles
                                 </a>
 
                                 <!-- Botón Editar -->
-                                <a href="{{ route('mantenimientos.edit', $mantenimiento->id) }}" class="btn btn-info btn-sm">
+                                <a href="{{ route('mantenimientos.edit', $mantenimiento->id) }}" class="btn-editar btn-sm">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
 
                                 <!-- Botón Eliminar con Modal -->
-                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $mantenimiento->id }})">
+                                <button type="button" class="btn-eliminar btn-sm" onclick="confirmDelete({{ $mantenimiento->id }})">
                                     <i class="fas fa-trash-alt"></i> Eliminar
                                 </button>
                             </div>

@@ -93,17 +93,17 @@
                         <td>
                             <div class="action-buttons">
                                 <!-- Botón Detalles -->
-                                <a href="{{ route('subcomponentes.show', $subcomponente->id) }}" class="btn btn-warning btn-sm">
+                                <a href="{{ route('subcomponentes.show', $subcomponente->id) }}" class="btn btn-detalles btn-sm">
                                     <i class="fas fa-info-circle"></i> Detalles
                                 </a>
 
                                 <!-- Botón Editar -->
-                                <a href="{{ route('subcomponentes.edit', $subcomponente->id) }}" class="btn btn-info btn-sm">
+                                <a href="{{ route('subcomponentes.edit', $subcomponente->id) }}" class="btn btn-editar btn-sm">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
 
                                 <!-- Botón Eliminar con Modal -->
-                                <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $subcomponente->id }})">
+                                <button type="button" class="btn btn-eliminar btn-sm" onclick="confirmDelete({{ $subcomponente->id }})">
                                     <i class="fas fa-trash-alt"></i> Eliminar
                                 </button>
                             </div>

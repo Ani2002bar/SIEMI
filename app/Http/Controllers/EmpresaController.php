@@ -22,33 +22,39 @@ class EmpresaController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $isAjax = $request->ajax();
+{
+    $validated = $request->validate([
+        'nombre' => 'required|string|max:45',
+        'direccion' => 'required|string|max:200',
+        'direccion_ip' => 'required|string|max:45',
+        'telefono' => 'nullable|string|max:20',
+        'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'locals' => 'nullable|string', // Validar como string porque se envía como JSON
+    ]);
 
-        $validated = $request->validate([
-            'nombre' => 'required|string|max:45',
-            'direccion' => 'required|string|max:200',
-            'direccion_ip' => 'required|string|max:45',
-            'telefono' => 'nullable|string|max:20',
-            'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        ]);
+    if ($request->hasFile('imagen')) {
+        $validated['imagen'] = $request->file('imagen')->store('imagenes_empresas', 'public');
+    }
 
-        if ($request->hasFile('imagen')) {
-            $validated['imagen'] = $request->file('imagen')->store('imagenes_empresas', 'public');
-        }
+    $empresa = Empresa::create($validated);
 
-        $empresa = Empresa::create($validated);
-
-        if ($isAjax) {
-            return response()->json([
-                'id' => $empresa->id,
-                'nombre' => $empresa->nombre,
-                'direccion' => $empresa->direccion,
-            ], 201);
-        } else {
-            return redirect()->route('empresas.index')->with('success', 'Empresa creada exitosamente.');
+    // Sincronizar locals vinculados
+    if ($request->filled('locals')) {
+        $localIds = json_decode($request->input('locals'), true); // Decodificar JSON
+        if (is_array($localIds)) {
+            $empresa->locals()->sync($localIds); // Sincronizar locals
         }
     }
+
+    // Verificar si la solicitud es AJAX
+    if ($request->ajax()) {
+        return response()->json($empresa); // Devuelve la empresa recién creada como JSON
+    }
+
+    return redirect()->route('empresas.index')->with('success', 'Empresa creada exitosamente.');
+}
+
+
 
     public function getExistingEmpresas()
     {
@@ -56,41 +62,58 @@ class EmpresaController extends Controller
         return response()->json($empresas);
     }
 
-
-    public function edit(Empresa $empresa)
+    public function getExistingLocales()
     {
-        $locals = Local::all();
-        return view('empresas.edit', compact('empresa', 'locals'));
+        $locals = Local::select('id', 'nombre_local', 'direccion')->get();
+        return response()->json($locals);
     }
 
-    public function update(Request $request, Empresa $empresa)
+    public function edit(Empresa $empresa)
 {
-    $request->validate([
+    // Obtener todos los locales existentes
+    $locals = Local::select('id', 'nombre_local')->get();
+
+    // Obtener los locales vinculados a la empresa con su información completa
+    $vinculados = $empresa->locals()->select('locals.id', 'locals.nombre_local')->get();
+
+    return view('empresas.edit', compact('empresa', 'locals', 'vinculados'));
+}
+public function update(Request $request, Empresa $empresa)
+{
+    $validated = $request->validate([
         'nombre' => 'required|string|max:45',
         'direccion' => 'required|string|max:200',
         'direccion_ip' => 'required|string|max:45',
         'telefono' => 'nullable|string|max:20',
-        'local_id' => 'required|exists:locals,id',
-        'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:1024000'
+        'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        'locals' => 'nullable|string', // Expected as JSON
     ]);
 
-    $data = $request->all();
-
-    // Verificar si delete_image es "1" para eliminar la imagen
+    // Handle image removal or upload
     if ($request->input('delete_image') == "1" && $empresa->imagen) {
         Storage::disk('public')->delete($empresa->imagen);
-        $data['imagen'] = null;
+        $validated['imagen'] = null;
     }
 
-    // Manejar carga de nueva imagen
     if ($request->hasFile('imagen')) {
         if ($empresa->imagen) {
             Storage::disk('public')->delete($empresa->imagen);
         }
-        $data['imagen'] = $request->file('imagen')->store('imagenes_empresas', 'public');
+        $validated['imagen'] = $request->file('imagen')->store('imagenes_empresas', 'public');
     }
 
-    $empresa->update($data);
+    $empresa->update($validated);
+
+    // Update linked locals
+    if ($request->filled('locals')) {
+        $localIds = json_decode($request->input('locals'), true); // Decode JSON input
+        if (is_array($localIds)) {
+            $empresa->locals()->sync($localIds); // Replace current locals with new list
+        }
+    } else {
+        // If no locals are provided, do not detach any
+        // Leave the current locals as they are
+    }
 
     return redirect()->route('empresas.index')->with('success', 'Empresa actualizada exitosamente.');
 }
@@ -98,10 +121,9 @@ class EmpresaController extends Controller
 
     public function show($id)
     {
-        $empresa = Empresa::with('local')->findOrFail($id);
+        $empresa = Empresa::with('locals')->findOrFail($id);
         return view('empresas.detail', compact('empresa'));
     }
-
     public function destroy(Empresa $empresa)
     {
         if ($empresa->imagen) {

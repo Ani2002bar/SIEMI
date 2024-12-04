@@ -59,4 +59,24 @@ class SubComponenteController extends Controller
         $subcomponente->delete();
         return redirect()->route('subcomponentes.index')->with('success', 'Subcomponente eliminado exitosamente.');
     }
+    public function storeFromModal(Request $request)
+    {
+        $validated = $request->validate([
+            'descripcion' => 'required|string|max:255',
+            'modelo' => 'required|string|max:255',
+            'nro_serie' => 'nullable|string|max:255',
+            'componente_id' => 'required|exists:componentes,id',
+        ]);
+
+        $subcomponente = SubComponente::create($validated);
+
+        return response()->json(['success' => true, 'subcomponente' => $subcomponente]);
+    }
+
+    public function getByComponente($componenteId)
+    {
+        $subcomponentes = SubComponente::where('componente_id', $componenteId)->get();
+        return response()->json($subcomponentes);
+    }
 }
+

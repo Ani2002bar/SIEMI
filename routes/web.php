@@ -67,6 +67,7 @@ Route::get('/panel', function () {
 Route::resource('modalidades', ModalidadController::class);
 Route::resource('locals', LocalController::class);
 Route::resource('empresas', EmpresaController::class);
+Route::get('/equipos/pdf', [EquipoController::class, 'generatePdf'])->name('equipos.pdf');
 Route::resource('equipos', EquipoController::class);
 Route::resource('repuestos', RepuestoController::class);
 Route::resource('mantenimientos', MantenimientoController::class);
@@ -87,3 +88,32 @@ Route::get('/api/departamentos/{localId}', [DepartamentoController::class, 'getD
 Route::post('/api/empresas/store', [EmpresaController::class, 'store'])->name('empresas.store');
 Route::delete('/api/empresas/{empresa}', [EmpresaController::class, 'destroy'])->name('empresas.destroy');
 Route::get('/api/empresas', [EmpresaController::class, 'getExistingEmpresas'])->name('api.empresas.get');
+
+
+Route::get('api/locals/get', [EmpresaController::class, 'getExistingLocales'])->name('api.locals.get');
+
+
+Route::get('/locales/{local}/empresas', [LocalController::class, 'getEmpresas']);
+
+Route::get('/mantenimientos/calendario', [MantenimientoController::class, 'calendar'])->name('mantenimientos.calendario');
+
+Route::get('/mantenimientos/calendar', [MantenimientoController::class, 'calendar'])->name('mantenimientos.calendar');
+
+
+
+Route::get('/calendar', [MantenimientoController::class, 'calendar'])->name('calendar.index');
+
+Route::get('/equipos/create', [EquipoController::class, 'create'])->name('equipos.create');
+Route::post('/equipos', [EquipoController::class, 'store'])->name('equipos.store');
+
+// Rutas para Componentes
+Route::post('/api/componentes', [ComponenteController::class, 'storeFromModal'])->name('api.componentes.store');
+Route::get('/api/componentes/{equipoId}', [ComponenteController::class, 'getByEquipo'])->name('api.componentes.getByEquipo');
+
+// Rutas para Subcomponentes
+Route::post('/api/subcomponentes', [SubComponenteController::class, 'storeFromModal'])->name('api.subcomponentes.store');
+Route::get('/api/subcomponentes/{componenteId}', [SubComponenteController::class, 'getByComponente'])->name('api.subcomponentes.getByComponente');
+
+Route::get('/mantenimientos/pdf/{id}', [MantenimientoController::class, 'generatePdf'])->name('mantenimientos.pdf');
+
+

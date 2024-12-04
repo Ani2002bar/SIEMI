@@ -53,7 +53,7 @@
             <table class="table table-bordered table-striped fs-6" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th>Código</th>
+                       
                         <th>Descripción</th>
                         <th>Observaciones</th>
                         <th>Costo</th>
@@ -65,7 +65,7 @@
                 <tbody>
                     @foreach ($repuestos as $repuesto)
                         <tr>
-                            <td>{{ $repuesto->codigo }}</td>
+                           
                             <td>{{ $repuesto->descripcion }}</td>
                             <td>{{ $repuesto->observaciones }}</td>
                             <td>{{ number_format($repuesto->costo, 2) }}</td>
@@ -78,15 +78,15 @@
                             <td>
                                 <div class="action-buttons">
                                     <!-- Botón Detalles -->
-                                    <a href="{{ route('repuestos.show', $repuesto->id) }}" class="btn btn-warning btn-sm">
+                                    <a href="{{ route('repuestos.show', $repuesto->id) }}" class="btn btn-detalles btn-sm">
                                         <i class="fas fa-info-circle"></i> Detalles
                                     </a>
                                     <!-- Botón Editar -->
-                                    <a href="{{ route('repuestos.edit', $repuesto->id) }}" class="btn btn-info btn-sm">
+                                    <a href="{{ route('repuestos.edit', $repuesto->id) }}" class="btn btn-editar btn-sm">
                                         <i class="fas fa-edit"></i> Editar
                                     </a>
                                     <!-- Botón Eliminar con Modal -->
-                                    <button type="button" class="btn btn-danger btn-sm" onclick="confirmDelete({{ $repuesto->id }})">
+                                    <button type="button" class="btn btn-eliminar btn-sm" onclick="confirmDelete({{ $repuesto->id }})">
                                         <i class="fas fa-trash-alt"></i> Eliminar
                                     </button>
                                 </div>

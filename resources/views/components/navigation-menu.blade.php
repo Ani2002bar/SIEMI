@@ -68,46 +68,50 @@
     </div>
 
     <!-- Nav Item - Pages Collapse Menu -->
-    
+
     <li class="nav-item">
         <a class="nav-link" href="{{ route('mantenimientos.index') }}">
             <i class="fas fa-clipboard-list"></i>
             <span>Mantenimientos</span></a>
-            <a class="nav-link" href="{{ route('tecnicos.index') }}">
+            <a class="nav-link" href="{{ route('calendar.index') }}">
+    <i class="fas fa-calendar-alt"></i>
+    <span>Calendario</span>
+</a>
+        <a class="nav-link" href="{{ route('tecnicos.index') }}">
             <i class="fas fa-clipboard-list"></i>
             <span>Tecnicos</span></a>
-            <a class="nav-link" href="{{ route('users.index') }}">
+        <a class="nav-link" href="{{ route('users.index') }}">
             <i class="fas fa-clipboard-list"></i>
             <span>Usuarios</span></a>
     </li>
     <li class="nav-item">
-    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseResources"
-       aria-expanded="true" aria-controls="collapseResources">
-        <i class="fas fa-boxes mr-2"></i>
-        <span>Recursos</span>
-    </a>
-    <div id="collapseResources" class="collapse" aria-labelledby="headingResources" data-parent="#accordionSidebar">
-        <div class="bg-white py-2 collapse-inner rounded">
-            <h6 class="collapse-header">Gestiones</h6>
-            <a class="collapse-item d-flex align-items-center" href="{{ route('equipos.index') }}">
-                <i class="fas fa-desktop mr-3"></i><span>Equipos</span>
-            </a>
-            <a class="collapse-item d-flex align-items-center" href="{{ route('repuestos.index') }}">
-                <i class="fas fa-cogs mr-3"></i><span>Repuestos</span>
-            </a>
-            <a class="collapse-item d-flex align-items-center" href="{{ route('modalidades.index') }}">
+        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseResources"
+            aria-expanded="true" aria-controls="collapseResources">
+            <i class="fas fa-boxes mr-2"></i>
+            <span>Recursos</span>
+        </a>
+        <div id="collapseResources" class="collapse" aria-labelledby="headingResources" data-parent="#accordionSidebar">
+            <div class="bg-white py-2 collapse-inner rounded">
+                <h6 class="collapse-header">Gestiones</h6>
+                <a class="collapse-item d-flex align-items-center" href="{{ route('equipos.index') }}">
+                    <i class="fas fa-desktop mr-3"></i><span>Equipos</span>
+                </a>
+                <a class="collapse-item d-flex align-items-center" href="{{ route('repuestos.index') }}">
+                    <i class="fas fa-cogs mr-3"></i><span>Repuestos</span>
+                </a>
+                <a class="collapse-item d-flex align-items-center" href="{{ route('modalidades.index') }}">
                     <i class="fas fa-clipboard-list mr-3"></i><span>Modalidades</span>
-            </a>  
-            <a class="collapse-item d-flex align-items-center" href="{{ route('componentes.index') }}">
-                <i class="fas fa-cogs mr-3"></i><span>Componentes</span>
-            </a>
-            <a class="collapse-item d-flex align-items-center" href="{{ route('subcomponentes.index') }}">
-                <i class="fas fa-cogs mr-3"></i><span>Sub Componentes</span>
-            </a>
-            <div class="collapse-divider"></div>
+                </a>
+                <a class="collapse-item d-flex align-items-center" href="{{ route('componentes.index') }}">
+                    <i class="fas fa-cogs mr-3"></i><span>Componentes</span>
+                </a>
+                <a class="collapse-item d-flex align-items-center" href="{{ route('subcomponentes.index') }}">
+                    <i class="fas fa-cogs mr-3"></i><span>Sub Componentes</span>
+                </a>
+                <div class="collapse-divider"></div>
+            </div>
         </div>
-    </div>
-</li>
+    </li>
 
 
     <li class="nav-item">
@@ -119,7 +123,7 @@
         <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
             <div class="bg-white py-2 collapse-inner rounded">
                 <h6 class="collapse-header">Gestiones</h6>
-                
+
                 <a class="collapse-item d-flex align-items-center" href="{{ route('locals.index') }}">
                     <i class="fas fa-map-marker-alt mr-3"></i><span>Locales</span>
                 </a>
@@ -180,6 +184,6 @@
         <a class="btn btn-success btn-sm" href="https://startbootstrap.com/theme/sb-admin-pro">Upgrade to Pro!</a>
     </div>
 
-    
+
 </ul>
 <!-- End of Sidebar -->

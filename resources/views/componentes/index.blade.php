@@ -80,16 +80,16 @@
                         <td>{{ $componente->equipo->descripcion ?? 'Sin equipo asociado' }}</td>
                         <td>
                             <div class="action-buttons">
-                                <a href="{{ route('componentes.show', $componente->id) }}" class="btn btn-warning btn-sm">
+                                <a href="{{ route('componentes.show', $componente->id) }}" class="btn btn-detalles btn-sm">
                                     <i class="fas fa-info-circle"></i> Detalles
                                 </a>
-                                <a href="{{ route('componentes.edit', $componente->id) }}" class="btn btn-info btn-sm">
+                                <a href="{{ route('componentes.edit', $componente->id) }}" class="btn btn-editar btn-sm">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
                                 <form action="{{ route('componentes.destroy', $componente->id) }}" method="POST" style="display: inline;">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-danger btn-sm">
+                                    <button type="submit" class="btn btn-eliminar btn-sm">
                                         <i class="fas fa-trash-alt"></i> Eliminar
                                     </button>
                                 </form>

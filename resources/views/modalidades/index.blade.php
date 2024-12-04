@@ -53,8 +53,8 @@
                     <tr>
                         <th>Nombre</th>
                         <th>Descripción</th>
-                        <th>Estado</th>
-                        <th>Acciones</th>
+                        
+                        <th class="text-center">Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -62,28 +62,24 @@
                     <tr>
                         <td>{{ $modalidad->nombre }}</td>
                         <td>{{ $modalidad->descripcion }}</td>
-                        <td>
-                            @if ($modalidad->estado == 1)
-                                <span class="badge rounded-pill text-bg-success">Activo</span>
-                            @else
-                                <span class="badge rounded-pill text-bg-danger">Eliminado</span>
-                            @endif
-                        </td>
+                        
                         <td>
                             <div class="d-flex justify-content-around">
+                            <a href="{{ route('modalidades.show', $modalidad->id) }}" class="btn btn-detalles btn-sm">
+                                    <i class="fas fa-info-circle"></i> Detalles
+                                </a>
                                 <!-- Botón Editar -->
-                                <a href="{{ route('modalidades.edit', $modalidad->id) }}" class="btn btn-info">
+                                <a href="{{ route('modalidades.edit', $modalidad->id) }}" class="btn btn-editar btn-sm">
                                     <i class="fas fa-edit"></i> Editar
                                 </a>
 
                                 <!-- Separador -->
-                                <div class="vr"></div>
-
+                              
                                 <!-- Botón Eliminar con Modal -->
-                                <button type="button" class="btn btn-danger" onclick="confirmDelete({{ $modalidad->id }})">
+                                <button type="button" class="btn btn-eliminar btn-sm" onclick="confirmDelete({{ $modalidad->id }})">
                                     <i class="fas fa-trash-alt"></i> Eliminar
                                 </button>
-                            </div>
+                            
                         </td>
                     </tr>
                 @endforeach

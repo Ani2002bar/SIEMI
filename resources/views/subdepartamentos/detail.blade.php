@@ -72,7 +72,7 @@
 
     <div class="detail-container">
         <div class="detail-info">
-            <h1>{{ $subdepartamento->nombre }}</h1>
+   
 
             <div class="detail-item">
                 <label>Nombre:</label>
@@ -84,10 +84,7 @@
                 <p>{{ $subdepartamento->descripcion }}</p>
             </div>
 
-            <div class="detail-item">
-                <label>Funciones:</label>
-                <p>{{ $subdepartamento->funciones }}</p>
-            </div>
+            
 
             <div class="detail-item">
                 <label>Departamento Asociado:</label>

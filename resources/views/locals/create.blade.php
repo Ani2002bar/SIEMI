@@ -311,4 +311,47 @@
 
 
     </script>
+    <script>
+        function crearEmpresa() {
+    const crearEmpresaBtn = document.getElementById('crearEmpresaBtn');
+    crearEmpresaBtn.disabled = true; // Deshabilitar el botón
+
+    const formData = new FormData();
+    formData.append('nombre', document.getElementById('nombre_empresa').value.trim());
+    formData.append('direccion', document.getElementById('direccion_empresa').value.trim());
+    formData.append('direccion_ip', document.getElementById('direccion_ip_empresa').value.trim());
+    formData.append('telefono', document.getElementById('telefono_empresa').value.trim());
+
+    const imagenInput = document.getElementById('imagen_empresa');
+    if (imagenInput.files[0]) {
+        formData.append('imagen', imagenInput.files[0]);
+    }
+
+    fetch('{{ route("empresas.store") }}', {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            'X-Requested-With': 'XMLHttpRequest',
+        },
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data.id) {
+                // Agregar la empresa creada al listado existente
+                empresasExistentes.push(data);
+                renderEmpresasExistentes();
+                document.getElementById('nuevaEmpresaForm').reset();
+                removeEmpresaImage();
+            } else {
+                alert('Error al crear la empresa.');
+            }
+        })
+        .catch(error => console.error('Error:', error))
+        .finally(() => {
+            crearEmpresaBtn.disabled = false; // Rehabilitar el botón
+        });
+}
+
+    </script>
 @endpush

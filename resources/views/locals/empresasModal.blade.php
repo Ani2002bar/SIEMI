@@ -34,7 +34,7 @@
                                     <button type="button" class="btn btn-danger btn-sm btn-remove-image" onclick="removeEmpresaImage()" style="display: none;">Eliminar imagen</button>
                                 </div>
                             </div>
-                            <button type="button" class="btn btn-success w-100" onclick="crearEmpresa()">Crear</button>
+                            <button type="button" id="crearEmpresaBtn" class="btn btn-success w-100" onclick="crearEmpresa()">Crear</button>
                         </form>
                     </div>
 
@@ -247,4 +247,5 @@
         empresasVinculadas = empresasVinculadas.filter(emp => emp.id !== id);
         renderEmpresasVinculadas();
     }
+    
 </script>
