@@ -65,9 +65,7 @@
                         
                         <td>
                             <div class="d-flex justify-content-around">
-                            <a href="{{ route('modalidades.show', $modalidad->id) }}" class="btn btn-detalles btn-sm">
-                                    <i class="fas fa-info-circle"></i> Detalles
-                                </a>
+                            
                                 <!-- Botón Editar -->
                                 <a href="{{ route('modalidades.edit', $modalidad->id) }}" class="btn btn-editar btn-sm">
                                     <i class="fas fa-edit"></i> Editar

@@ -18,9 +18,9 @@ class EquipoController extends Controller
 {
     public function index(Request $request)
     {
-        $query = Equipo::query();
+        $query = Equipo::with(['empresa', 'modalidad', 'local']); // Relacionar datos necesarios
 
-        // Apply filters
+        // Aplicar filtros si están definidos
         if ($request->filled('empresa_id')) {
             $query->where('empresa_id', $request->empresa_id);
         }
@@ -30,32 +30,28 @@ class EquipoController extends Controller
         if ($request->filled('local_id')) {
             $query->where('local_id', $request->local_id);
         }
-        if ($request->filled('departamento_id')) {
-            $query->where('departamento_id', $request->departamento_id);
-        }
-        if ($request->filled('subdepartamento_id')) {
-            $query->where('subdepartamento_id', $request->subdepartamento_id);
+        if ($request->filled('estado')) {
+            $query->where('estado', $request->estado);
         }
 
-        // Fetch filtered data
+        // Manejo de solicitudes AJAX
+        if ($request->ajax()) {
+            $equipos = $query->latest()->get(['id', 'descripcion', 'nro_serie', 'estado']);
+            return response()->json(['equipos' => $equipos]);
+        }
+
+        // Cargar datos para la vista
         $equipos = $query->latest()->get();
-
-        // Fetch dropdown options
         $empresas = Empresa::all();
         $locals = Local::all();
         $modalidades = Modalidad::all();
-        $departamentos = Departamento::all();
-        $subdepartamentos = SubDepartamento::all();
 
-        return view('equipos.index', compact(
-            'equipos',
-            'empresas',
-            'locals',
-            'modalidades',
-            'departamentos',
-            'subdepartamentos'
-        ));
+        return view('equipos.index', compact('equipos', 'empresas', 'locals', 'modalidades'));
     }
+
+
+
+
 
 
     public function create()
@@ -75,6 +71,7 @@ class EquipoController extends Controller
             'local_id' => 'required|exists:locals,id',
             'descripcion' => 'required|string|max:200',
             'modelo' => 'required|string|max:50',
+            'marca' => 'required|string|max:50',
             'nro_serie' => 'required|string|max:50',
             'observaciones' => 'nullable|string|max:200',
             'direccion_ip' => 'nullable|string|max:50',
@@ -93,6 +90,7 @@ class EquipoController extends Controller
             'local_id',
             'descripcion',
             'modelo',
+            'marca',
             'nro_serie',
             'observaciones',
             'direccion_ip',
@@ -114,7 +112,7 @@ class EquipoController extends Controller
 
         if ($request->filled('componentes')) {
             $componentes = json_decode($request->input('componentes'), true);
-    
+
             foreach ($componentes as $componenteData) {
                 $componente = Componente::create([
                     'descripcion' => $componenteData['descripcion'],
@@ -122,7 +120,7 @@ class EquipoController extends Controller
                     'nro_serie' => $componenteData['nro_serie'],
                     'equipo_id' => $equipo->id,
                 ]);
-    
+
                 foreach ($componenteData['subcomponentes'] as $subcomponenteData) {
                     SubComponente::create([
                         'descripcion' => $subcomponenteData['descripcion'],
@@ -133,14 +131,14 @@ class EquipoController extends Controller
                 }
             }
         }
-    
+
         return redirect()->route('equipos.index')->with('success', 'Equipo creado exitosamente.');
     }
 
 
     public function show($id)
     {
-        $equipo = Equipo::with(['empresa', 'locals', 'departamento', 'subdepartamento', 'modalidad'])->findOrFail($id);
+        $equipo = Equipo::with(['empresa', 'local', 'departamento', 'subdepartamento', 'modalidad'])->findOrFail($id);
 
         $repuestos = $equipo->repuestos;
         $componentes = $equipo->componentes;
@@ -151,36 +149,71 @@ class EquipoController extends Controller
 
     public function edit(Equipo $equipo)
     {
+        // Cargar relaciones del equipo con componentes y subcomponentes
+        $equipo->load('componentes.subcomponentes');
+
+        // Obtener datos adicionales para los selects
         $empresas = Empresa::all();
         $locals = Local::all();
         $modalidades = Modalidad::all();
         $departamentos = Departamento::where('local_id', $equipo->local_id)->get();
         $subdepartamentos = SubDepartamento::where('departamento_id', $equipo->departamento_id)->get();
-        return view('equipos.edit', compact('equipo', 'empresas', 'locals', 'modalidades', 'departamentos', 'subdepartamentos'));
+
+        // Mapear componentes y subcomponentes para ser enviados como JSON
+        $componentes = $equipo->componentes->map(function ($componente) {
+            return [
+                'id' => $componente->id,
+                'descripcion' => $componente->descripcion,
+                'modelo' => $componente->modelo,
+                'nro_serie' => $componente->nro_serie,
+                'subcomponentes' => $componente->subcomponentes->map(function ($subcomponente) {
+                    return [
+                        'id' => $subcomponente->id,
+                        'descripcion' => $subcomponente->descripcion,
+                        'modelo' => $subcomponente->modelo,
+                        'nro_serie' => $subcomponente->nro_serie,
+                    ];
+                })->toArray(),
+            ];
+        })->toArray();
+
+        return view('equipos.edit', compact(
+            'equipo',
+            'empresas',
+            'locals',
+            'modalidades',
+            'departamentos',
+            'subdepartamentos',
+            'componentes' // Incluye componentes para el frontend
+        ));
     }
+
 
     public function update(Request $request, Equipo $equipo)
     {
         $request->validate([
+            'local_id' => 'required|exists:locals,id',
             'descripcion' => 'required|string|max:200',
             'modelo' => 'required|string|max:50',
+            'marca' => 'required|string|max:50',
             'nro_serie' => 'required|string|max:50',
             'observaciones' => 'nullable|string|max:200',
             'direccion_ip' => 'nullable|string|max:50',
-            'anio_fabricacion' => 'required|date',
-            'estado' => 'required|string|max:45',
-            'fecha_instalacion' => 'required|date',
-            'empresa_id' => 'required|exists:empresas,id',
-            'local_id' => 'required|exists:locals,id',
-            'departamento_id' => 'required|exists:departamentos,id',
-            'subdepartamento_id' => 'required|exists:subdepartamentos,id',
-            'modalidades_id' => 'required|exists:modalidades,id',
+            'anio_fabricacion' => 'nullable|date',
+            'estado' => 'required|in:Activo,Inactivo',
+            'fecha_instalacion' => 'nullable|date',
+            'empresa_id' => 'nullable|exists:empresas,id',
+            'departamento_id' => 'nullable|exists:departamentos,id',
+            'subdepartamento_id' => 'nullable|exists:subdepartamentos,id',
+            'modalidades_id' => 'nullable|exists:modalidades,id',
             'imagen' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'componentes' => 'nullable|json',// Componentes enviados desde el formulario
         ]);
 
-        $data = $request->only([
+        $equipo->update($request->only([
             'descripcion',
             'modelo',
+            'marca',
             'nro_serie',
             'observaciones',
             'direccion_ip',
@@ -192,23 +225,49 @@ class EquipoController extends Controller
             'departamento_id',
             'subdepartamento_id',
             'modalidades_id',
-        ]);
+        ]));
 
-        if ($request->input('delete_image') == 1 && $equipo->imagen) {
-            Storage::delete(str_replace('storage/', 'public/', $equipo->imagen));
-            $data['imagen'] = null;
-        } elseif ($request->hasFile('imagen')) {
-            if ($equipo->imagen) {
-                Storage::delete(str_replace('storage/', 'public/', $equipo->imagen));
+        if ($request->filled('componentes')) {
+            $componentes = json_decode($request->input('componentes'), true);
+
+            // Eliminar componentes no enviados
+            $componenteIds = collect($componentes)->pluck('id')->filter()->toArray();
+            $equipo->componentes()->whereNotIn('id', $componenteIds)->delete();
+
+            foreach ($componentes as $componenteData) {
+                $componente = Componente::updateOrCreate(
+                    ['id' => $componenteData['id'] ?? null],
+                    [
+                        'descripcion' => $componenteData['descripcion'],
+                        'modelo' => $componenteData['modelo'],
+                        'nro_serie' => $componenteData['nro_serie'],
+                        'equipo_id' => $equipo->id,
+                    ]
+                );
+
+                // Eliminar subcomponentes no enviados
+                $subcomponenteIds = collect($componenteData['subcomponentes'])->pluck('id')->filter()->toArray();
+                $componente->subcomponentes()->whereNotIn('id', $subcomponenteIds)->delete();
+
+                foreach ($componenteData['subcomponentes'] as $subcomponenteData) {
+                    SubComponente::updateOrCreate(
+                        ['id' => $subcomponenteData['id'] ?? null],
+                        [
+                            'descripcion' => $subcomponenteData['descripcion'],
+                            'modelo' => $subcomponenteData['modelo'],
+                            'nro_serie' => $subcomponenteData['nro_serie'],
+                            'componente_id' => $componente->id,
+                        ]
+                    );
+                }
             }
-            $imagePath = $request->file('imagen')->store('public/imagenes_equipos');
-            $data['imagen'] = str_replace('public/', 'storage/', $imagePath);
         }
-
-        $equipo->update($data);
 
         return redirect()->route('equipos.index')->with('success', 'Equipo actualizado exitosamente.');
     }
+
+
+
 
     public function destroy(Equipo $equipo)
     {
@@ -233,36 +292,68 @@ class EquipoController extends Controller
         $departamentos = Departamento::where('local_id', $localId)->get(['id', 'nombre']);
         return response()->json($departamentos);
     }
+
     public function getSubdepartamentos($departamentoId)
     {
         $subdepartamentos = SubDepartamento::where('departamento_id', $departamentoId)->get(['id', 'nombre']);
         return response()->json($subdepartamentos);
     }
 
+
+
     public function generatePdf(Request $request)
-    {
-        $query = Equipo::query();
+{
+    $query = Equipo::with(['empresa', 'local', 'modalidad']); // Cargar relaciones necesarias
 
-        if ($request->filled('empresa_id')) {
-            $query->where('empresa_id', $request->empresa_id);
-        }
-        if ($request->filled('modalidad_id')) {
-            $query->where('modalidades_id', $request->modalidad_id);
-        }
-        if ($request->filled('local_id')) {
-            $query->where('local_id', $request->local_id);
-        }
-        if ($request->filled('departamento_id')) {
-            $query->where('departamento_id', $request->departamento_id);
-        }
-        if ($request->filled('subdepartamento_id')) {
-            $query->where('subdepartamento_id', $request->subdepartamento_id);
-        }
-
-        $equipos = $query->get();
-
-        // Generar PDF
-        $pdf = Pdf::loadView('equipos.pdf', compact('equipos'));
-        return $pdf->download('Listado_de_Equipos.pdf');
+    // Aplicar los filtros si existen
+    if ($request->filled('empresa_id')) {
+        $query->where('empresa_id', $request->empresa_id);
     }
+    if ($request->filled('modalidad_id')) {
+        $query->where('modalidades_id', $request->modalidad_id);
+    }
+    if ($request->filled('local_id')) {
+        $query->where('local_id', $request->local_id);
+    }
+    if ($request->filled('estado')) {
+        $query->where('estado', $request->estado);
+    }
+
+    // Obtiene los equipos filtrados
+    $equipos = $query->get();
+
+    // Genera el PDF
+    $pdf = Pdf::loadView('equipos.pdf', compact('equipos'));
+    return $pdf->download('Listado_de_Equipos.pdf');
+}
+
+
+
+
+
+    public function storeFromModal(Request $request)
+    {
+        $validated = $request->validate([
+            'descripcion' => 'required|string|max:255',
+            'modelo' => 'required|string|max:255',
+            'equipo_id' => 'required|exists:equipos,id',
+        ]);
+
+        $componente = Componente::create($validated);
+
+        return response()->json($componente, 201);
+    }
+    public function getComponentes($equipoId)
+    {
+        $componentes = Componente::where('equipo_id', $equipoId)->with('subcomponentes')->get();
+        return response()->json($componentes);
+    }
+
+    public function getByEquipo($equipoId)
+    {
+        $componentes = Componente::where('equipo_id', $equipoId)->with('subcomponentes')->get();
+        return response()->json($componentes);
+    }
+
+
 }

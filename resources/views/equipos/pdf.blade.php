@@ -5,70 +5,70 @@
     <meta charset="UTF-8">
     <title>Listado de Equipos</title>
     <style>
-    body {
-        font-family: Arial, sans-serif;
-        font-size: 14px;
-        margin: 20px; /* Ajusta el margen global */
-        color: #333;
-    }
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            margin: 20px;
+            color: #333;
+        }
 
-    .header {
-        text-align: center;
-        margin: 0;
-        padding: 10px 0; /* Espaciado interno para separarlo del borde */
-    }
+        .header {
+            text-align: center;
+            margin: 0;
+            padding: 10px 0;
+        }
 
-    .header table {
-        margin: 0 auto;
-        width: 100%;
-        border-collapse: collapse;
-    }
+        .header table {
+            margin: 0 auto;
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-    .header td {
-        vertical-align: middle;
-        padding: 5px 10px; /* Espaciado interno entre los elementos */
-    }
+        .header td {
+            vertical-align: middle;
+            padding: 5px 10px;
+        }
 
-    .header img {
-        height: 80px; /* Tamaño razonable de la imagen */
-        margin-right: 20px; /* Separación entre imagen y texto */
-    }
+        .header img {
+            height: 80px;
+            margin-right: 20px;
+        }
 
-    .header p {
-        margin: 2px 0; /* Compacta los párrafos sin que se superpongan */
-        font-size: 12px;
-        line-height: 1.4; /* Espaciado más fluido entre líneas */
-    }
+        .header p {
+            margin: 2px 0;
+            font-size: 12px;
+            line-height: 1.4;
+        }
 
-    table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 10px; /* Reduce el margen superior */
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
 
-    table thead th {
-        text-align: left;
-        padding: 10px;
-        font-size: 14px;
-        font-weight: bold;
-        background-color: #f4f4f4;
-        border-bottom: 2px solid #ddd;
-    }
+        table thead th {
+            text-align: left;
+            padding: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            background-color: #f4f4f4;
+            border-bottom: 2px solid #ddd;
+        }
 
-    table tbody td {
-        padding: 8px 10px;
-        border-bottom: 1px solid #eee;
-    }
+        table tbody td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #eee;
+        }
 
-    table tbody tr:nth-child(even) {
-        background-color: #f9f9f9;
-    }
+        table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
 
-    table tbody tr:hover {
-        background-color: #f1f1f1;
-    }
-</style>
-
+        table tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style>
+</head>
 
 <body>
     <div class="header">
@@ -96,9 +96,14 @@
     <table>
         <thead>
             <tr>
-                <th>#</th>
+                <th>Ítem</th>
                 <th>Descripción</th>
                 <th>Número de Serie</th>
+                <th>Marca</th>
+                <th>Modelo</th>
+                <th>Empresa</th>
+                <th>Local</th>
+                <th>Modalidad</th>
                 <th>Estado</th>
             </tr>
         </thead>
@@ -108,11 +113,22 @@
                     <td>{{ $index + 1 }}</td>
                     <td>{{ $equipo->descripcion }}</td>
                     <td>{{ $equipo->nro_serie }}</td>
+                    <td>{{ $equipo->marca }}</td>
+                    <td>{{ $equipo->modelo }}</td>
+                    <td>{{ $equipo->empresa->nombre ?? 'N/A' }}</td>
+                    <td>{{ $equipo->local->nombre_local ?? 'N/A' }}</td>
+                    <td>{{ $equipo->modalidad->nombre ?? 'N/A' }}</td>
                     <td>{{ $equipo->estado }}</td>
                 </tr>
             @endforeach
         </tbody>
     </table>
+
+    <!-- Resumen de Equipos -->
+<div class="summary">
+        <p><strong>Cantidad Total de Equipos:</strong> {{ $equipos->count() }}</p>
+        <p><strong>Cantidad Total de Equipos Inactivos:</strong> {{ $equipos->where('estado', 'Inactivo')->count() }}</p>
+    </div>
 </body>
 
 </html>

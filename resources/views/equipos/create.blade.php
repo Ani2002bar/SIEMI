@@ -46,6 +46,25 @@
                         @enderror
                     </div>
 
+
+
+                    <!-- Marca -->
+                    <div class="col-md-6">
+                        <label for="direccion_ip" class="form-label">Marca :</label>
+                        <input type="text" name="marca" id="marca" class="form-control" value="{{ old('marca') }}">
+                        @error('direccion_ip')
+                            <small class="text-danger">{{ '*' . $message }}</small>
+                        @enderror
+                    </div>
+                    <!-- Dirección IP -->
+                    <div class="col-md-6">
+                        <label for="direccion_ip" class="form-label">Dirección IP:</label>
+                        <input type="text" name="direccion_ip" id="direccion_ip" class="form-control"
+                            value="{{ old('direccion_ip') }}">
+                        @error('direccion_ip')
+                            <small class="text-danger">{{ '*' . $message }}</small>
+                        @enderror
+                    </div>
                     <!-- Estado -->
                     <div class="col-md-6">
                         <label for="estado" class="form-label">Estado:</label>
@@ -60,19 +79,21 @@
 
                     <!-- Local -->
                     <div class="col-md-6">
-                        <label for="local_id" class="form-label">Local:</label>
-                        <select name="local_id" id="local_id" class="form-control" required>
-                            <option value="">Seleccione un local</option>
-                            @foreach($locals as $local)
-                                <option value="{{ $local->id }}" {{ old('local_id') == $local->id ? 'selected' : '' }}>
-                                    {{ $local->nombre_local }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('local_id')
-                            <small class="text-danger">{{ '*' . $message }}</small>
-                        @enderror
-                    </div>
+    <label for="local_id" class="form-label">Local:</label>
+    <select name="local_id" id="local_id" class="form-control" required>
+    <option value="">Seleccione un local</option>
+    @foreach($locals as $local)
+        <option value="{{ $local->id }}" {{ old('local_id') == $local->id ? 'selected' : '' }}>
+            {{ $local->nombre_local }}
+        </option>
+    @endforeach
+</select>
+
+    @error('local_id')
+        <small class="text-danger">{{ '*' . $message }}</small>
+    @enderror
+</div>
+
 
                     <!-- Empresa -->
                     <div class="col-md-6">
@@ -122,21 +143,7 @@
                         @enderror
                     </div>
 
-                    <!-- Modalidad -->
-                    <div class="col-md-6">
-                        <label for="modalidades_id" class="form-label">Modalidad:</label>
-                        <select name="modalidades_id" id="modalidades_id" class="form-control">
-                            <option value="">Seleccione una modalidad</option>
-                            @foreach($modalidades as $modalidad)
-                                <option value="{{ $modalidad->id }}" {{ old('modalidades_id') == $modalidad->id ? 'selected' : '' }}>
-                                    {{ $modalidad->nombre }}
-                                </option>
-                            @endforeach
-                        </select>
-                        @error('modalidades_id')
-                            <small class="text-danger">{{ '*' . $message }}</small>
-                        @enderror
-                    </div>
+
 
                     <!-- Año de Fabricación -->
                     <div class="col-md-6">
@@ -158,22 +165,30 @@
                         @enderror
                     </div>
 
+
+
+
+                    <!-- Modalidad -->
+                    <div class="col-md-6">
+                        <label for="modalidades_id" class="form-label">Modalidad:</label>
+                        <select name="modalidades_id" id="modalidades_id" class="form-control">
+                            <option value="">Seleccione una modalidad</option>
+                            @foreach($modalidades as $modalidad)
+                                <option value="{{ $modalidad->id }}" {{ old('modalidades_id') == $modalidad->id ? 'selected' : '' }}>
+                                    {{ $modalidad->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('modalidades_id')
+                            <small class="text-danger">{{ '*' . $message }}</small>
+                        @enderror
+                    </div>
                     <!-- Observaciones -->
                     <div class="col-12">
                         <label for="observaciones" class="form-label">Observaciones:</label>
                         <textarea name="observaciones" id="observaciones" rows="3"
                             class="form-control">{{ old('observaciones') }}</textarea>
                         @error('observaciones')
-                            <small class="text-danger">{{ '*' . $message }}</small>
-                        @enderror
-                    </div>
-
-                    <!-- Dirección IP -->
-                    <div class="col-md-6">
-                        <label for="direccion_ip" class="form-label">Dirección IP:</label>
-                        <input type="text" name="direccion_ip" id="direccion_ip" class="form-control"
-                            value="{{ old('direccion_ip') }}">
-                        @error('direccion_ip')
                             <small class="text-danger">{{ '*' . $message }}</small>
                         @enderror
                     </div>
@@ -205,7 +220,8 @@
                 </div>
             </div>
             <div class="card-footer text-center">
-            <button type="button" class="btn btn-primary" onclick="enviarFormulario()">Guardar</button>
+                <button type="button" class="btn btn-primary" onclick="enviarFormulario()">Guardar</button>
+
 
                 <a href="{{ route('equipos.index') }}" class="btn btn-danger">Cancelar</a>
             </div>
@@ -237,6 +253,18 @@
             imagePreview.style.display = 'none';
             removeButton.style.display = 'none';
         }
+        function enviarFormulario() {
+            const formulario = document.getElementById('formularioEquipo');
+            const botonEnviar = formulario.querySelector('button[type="button"]');
+
+            botonEnviar.disabled = true; // Deshabilita el botón para evitar clics múltiples
+            formulario.submit(); // Envía el formulario
+        }
+
+        document.getElementById('formularioEquipo').addEventListener('submit', function (e) {
+            e.preventDefault(); // Previene el comportamiento predeterminado
+            enviarFormulario();
+        });
     </script>
 
     <script>
@@ -273,15 +301,15 @@
                 tabla.innerHTML = '';
                 componentes.forEach((componente, index) => {
                     const fila = `
-                    <tr>
-                        <td>${componente.descripcion}</td>
-                        <td>${componente.modelo}</td>
-                        <td>
-                            <button type="button" class="btn btn-info btn-sm" onclick="abrirModalSubcomponentes(${index})">Subcomponentes</button>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarComponente(${index})">Eliminar</button>
-                        </td>
-                    </tr>
-                `;
+                        <tr>
+                            <td>${componente.descripcion}</td>
+                            <td>${componente.modelo}</td>
+                            <td>
+                                <button type="button" class="btn btn-info btn-sm" onclick="abrirModalSubcomponentes(${index})">Subcomponentes</button>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarComponente(${index})">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
                     tabla.innerHTML += fila;
                 });
 
@@ -333,14 +361,14 @@
 
                 subcomponentes.forEach((subcomponente, index) => {
                     const fila = `
-                    <tr>
-                        <td>${subcomponente.descripcion}</td>
-                        <td>${subcomponente.modelo}</td>
-                        <td>
-                            <button type="button" class="btn btn-danger btn-sm" onclick="eliminarSubcomponente(${index})">Eliminar</button>
-                        </td>
-                    </tr>
-                `;
+                        <tr>
+                            <td>${subcomponente.descripcion}</td>
+                            <td>${subcomponente.modelo}</td>
+                            <td>
+                                <button type="button" class="btn btn-danger btn-sm" onclick="eliminarSubcomponente(${index})">Eliminar</button>
+                            </td>
+                        </tr>
+                    `;
                     tabla.innerHTML += fila;
                 });
             }

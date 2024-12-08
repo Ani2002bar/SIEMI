@@ -13,15 +13,21 @@ class Componente extends Model
         'descripcion',
         'modelo',
         'nro_serie',
-        'equipo_id'
+        'equipo_id',
     ];
 
     public function equipo()
     {
         return $this->belongsTo(Equipo::class);
     }
+
     public function subcomponentes()
-{
-    return $this->hasMany(SubComponente::class);
-}
+    {
+        return $this->hasMany(SubComponente::class);
+    }
+
+    public function repuestos()
+    {
+        return $this->hasMany(Repuesto::class);
+    }
 }

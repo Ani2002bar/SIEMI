@@ -18,39 +18,33 @@ class RolesAndPermissionsSeeder extends Seeder
         // Reset cache de roles y permisos
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
-        // Crear permisos
-        $permissions = [
-            'crear usuarios',
-            'editar usuarios',
-            'ver reportes',
+        // Definir roles y permisos
+        $rolesWithPermissions = [
+            'Administrador' => [
+                'crear usuarios',
+                'editar usuarios',
+                'ver reportes',
+            ],
+            'Usuario' => [
+                'ver reportes',
+            ],
         ];
 
-        foreach ($permissions as $permission) {
-            if (!Permission::where('name', $permission)->exists()) {
-                Permission::create(['name' => $permission]);
+        // Crear permisos y roles
+        foreach ($rolesWithPermissions as $roleName => $permissions) {
+            // Crear o buscar rol
+            $role = Role::firstOrCreate(['name' => $roleName]);
+
+            // Crear permisos y asignarlos al rol
+            foreach ($permissions as $permissionName) {
+                $permission = Permission::firstOrCreate(['name' => $permissionName]);
+                $role->givePermissionTo($permission);
             }
+
+            $this->command->info("Rol '{$roleName}' actualizado con permisos.");
         }
 
-        // Crear roles
-        if (!Role::where('name', 'Administrador')->exists()) {
-            $adminRole = Role::create(['name' => 'Administrador']);
-        } else {
-            $adminRole = Role::where('name', 'Administrador')->first();
-        }
-
-        if (!Role::where('name', 'Usuario')->exists()) {
-            $userRole = Role::create(['name' => 'Usuario']);
-        } else {
-            $userRole = Role::where('name', 'Usuario')->first();
-        }
-
-        // Asignar permisos a roles
-        $adminRole->givePermissionTo($permissions);
-
-        if ($userRole) {
-            $userRole->givePermissionTo(['ver reportes']);
-        }
-
+        // Mensaje final
         $this->command->info('Roles y permisos creados o actualizados correctamente.');
     }
 }

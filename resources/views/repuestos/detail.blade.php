@@ -5,36 +5,36 @@
 @push('css')
 <style>
     .detail-container {
-        max-width: 800px;
+        max-width: 1100px;
         margin: 20px auto;
         padding: 20px;
         background-color: #ffffff;
         border-radius: 10px;
         box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.15);
     }
-    .detail-info h1 {
-        font-size: 1.8em;
-        color: #333;
-        margin-bottom: 20px;
-    }
+
     .detail-item label {
         font-weight: bold;
         color: #333;
         display: block;
         margin-bottom: 5px;
     }
+
     .detail-item p {
         padding: 10px;
-        background-color: #f7f7f7;
+        background-color: #f8f9fa;
         border-radius: 5px;
         border: 1px solid #e0e0e0;
         color: #555;
     }
-    .buttons-container {
-        display: flex;
-        justify-content: center;
-        gap: 15px;
-        margin-top: 20px;
+
+    .btn-container {
+        text-align: center;
+        margin-top: 30px;
+    }
+
+    .btn-container .btn {
+        margin: 0 10px;
     }
 </style>
 @endpush
@@ -49,42 +49,78 @@
     </ol>
 
     <div class="detail-container">
-        <div class="detail-info">
-            <h1>{{ $repuesto->descripcion }}</h1>
-
-            <div class="detail-item">
-                <label>Código:</label>
-                <p>{{ $repuesto->codigo }}</p>
-            </div>
-
-            <div class="detail-item">
-                <label>Descripción:</label>
+        <div class="row">
+            <!-- Descripción -->
+            <div class="col-md-6 mb-3 detail-item">
+                <label for="descripcion">Descripción:</label>
                 <p>{{ $repuesto->descripcion }}</p>
             </div>
-
-            <div class="detail-item">
-                <label>Observaciones:</label>
+            
+            <!-- Número de Serie -->
+            <div class="col-md-6 mb-3 detail-item">
+                <label for="nro_serie">Número de Serie:</label>
+                <p>{{ $repuesto->nro_serie ?? 'N/A' }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <!-- Número de Parte -->
+            <div class="col-md-6 mb-3 detail-item">
+                <label for="nro_parte">Número de Parte:</label>
+                <p>{{ $repuesto->nro_parte ?? 'N/A' }}</p>
+            </div>
+            
+            <!-- Observaciones -->
+            <div class="col-md-6 mb-3 detail-item">
+                <label for="observaciones">Observaciones:</label>
                 <p>{{ $repuesto->observaciones ?? 'N/A' }}</p>
             </div>
-
-            <div class="detail-item">
-                <label>Costo:</label>
+        </div>
+        <div class="row">
+            <!-- Costo -->
+            <div class="col-md-6 mb-3 detail-item">
+                <label for="costo">Costo:</label>
                 <p>{{ number_format($repuesto->costo, 2) }}</p>
             </div>
-
-            <div class="detail-item">
-                <label>Equipo Asociado:</label>
+            <!-- Estado -->
+            <div class="col-md-6 mb-3 detail-item">
+                <label for="estado">Estado:</label>
+                <p>{{ $repuesto->estado }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <!-- Equipo Asociado -->
+            <div class="col-md-6 mb-3 detail-item">
+                <label for="equipo">Equipo Asociado:</label>
                 <p>{{ $repuesto->equipo ? $repuesto->equipo->descripcion : 'N/A' }}</p>
             </div>
-
-            <div class="detail-item">
-                <label>Local Asociado:</label>
+            <!-- Local Asociado -->
+            <div class="col-md-6 mb-3 detail-item">
+                <label for="local">Local Asociado:</label>
                 <p>{{ $repuesto->local ? $repuesto->local->nombre_local : 'N/A' }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <!-- Empresa Asociada -->
+            <div class="col-md-6 mb-3 detail-item">
+                <label for="empresa">Empresa Asociada:</label>
+                <p>{{ $repuesto->empresa ? $repuesto->empresa->nombre : 'N/A' }}</p>
+            </div>
+            <!-- Componente Asociado -->
+            <div class="col-md-6 mb-3 detail-item">
+                <label for="componente">Componente Asociado:</label>
+                <p>{{ $repuesto->componente ? $repuesto->componente->descripcion : 'N/A' }}</p>
+            </div>
+        </div>
+        <div class="row">
+            <!-- Subcomponente Asociado -->
+            <div class="col-md-6 mb-3 detail-item">
+                <label for="subcomponente">Subcomponente Asociado:</label>
+                <p>{{ $repuesto->subcomponente ? $repuesto->subcomponente->descripcion : 'N/A' }}</p>
             </div>
         </div>
     </div>
 
-    <div class="buttons-container">
+    <div class="btn-container">
         <a href="{{ route('repuestos.index') }}" class="btn btn-primary">Volver</a>
         <a href="{{ route('repuestos.edit', $repuesto->id) }}" class="btn btn-warning">Editar</a>
     </div>

@@ -13,9 +13,8 @@ class Empresa extends Model
         'nombre',
         'direccion',
         'direccion_ip',
-        'telefono', // Campo para teléfono
-        'imagen',   // Campo para la imagen
-        'local_id'
+        'telefono',
+        'imagen',
     ];
 
     public function equipos()
@@ -24,7 +23,12 @@ class Empresa extends Model
     }
 
     public function locals()
-{
-    return $this->belongsToMany(Local::class, 'empresa_local', 'empresa_id', 'local_id');
-}
+    {
+        return $this->belongsToMany(Local::class, 'empresa_local', 'empresa_id', 'local_id');
+    }
+
+    public function repuestos()
+    {
+        return $this->hasMany(Repuesto::class);
+    }
 }

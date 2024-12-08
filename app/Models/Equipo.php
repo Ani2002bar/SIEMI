@@ -13,6 +13,7 @@ class Equipo extends Model
         'descripcion',
         'modelo',
         'nro_serie',
+        'marca',
         'observaciones',
         'direccion_ip',
         'anio_fabricacion',
@@ -31,7 +32,7 @@ class Equipo extends Model
         return $this->belongsTo(Empresa::class);
     }
 
-    public function locals()
+    public function local()
     {
         return $this->belongsTo(Local::class, 'local_id');
     }
@@ -51,9 +52,9 @@ class Equipo extends Model
         return $this->belongsTo(Modalidad::class, 'modalidades_id');
     }
     public function repuestos()
-{
-    return $this->hasMany(Repuesto::class);
-}
+    {
+        return $this->hasMany(Repuesto::class);
+    }
 
 public function componentes()
 {
@@ -64,6 +65,7 @@ public function getImagenAttribute($value)
 {
     return $value ? asset($value) : asset('img/6QQGqDyu_400x400.jpg');
 }
+
 
 
 }

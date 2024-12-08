@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,9 +16,6 @@ class Mantenimiento extends Model
         'tecnico_id',
         'local_id',
         'equipo_id',
-        'repuesto_id',
-        'componente_id',
-        'subcomponente_id',
     ];
 
     // Relación con Técnico
@@ -40,21 +36,12 @@ class Mantenimiento extends Model
         return $this->belongsTo(Equipo::class);
     }
 
-    // Relación con Repuesto
-    public function repuesto()
-    {
-        return $this->belongsTo(Repuesto::class);
-    }
-
-    // Relación con Componente
-    public function componente()
-    {
-        return $this->belongsTo(Componente::class);
-    }
-
-    // Relación con Subcomponente
-    public function subcomponente()
-    {
-        return $this->belongsTo(Subcomponente::class);
-    }
+    // Relación muchos a muchos con Repuestos
+    public function repuestos()
+{
+    return $this->belongsToMany(Repuesto::class, 'mantenimiento_repuesto')
+                ->withPivot(['costo_total', 'cantidad'])
+                ->withTimestamps();
 }
+}
+

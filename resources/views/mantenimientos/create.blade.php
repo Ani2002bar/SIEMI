@@ -13,10 +13,10 @@
 
     <div class="card">
         <div class="card-body">
-            <form action="{{ route('mantenimientos.store') }}" method="POST">
+            <form action="{{ route('mantenimientos.store') }}" method="POST" id="formMantenimiento">
                 @csrf
 
-                <!-- Technician and Local -->
+                <!-- Técnico y Local -->
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="tecnico_id" class="form-label">Técnico</label>
@@ -44,7 +44,7 @@
                     </div>
                 </div>
 
-                <!-- Equipment and Cost -->
+                <!-- Equipo y Costo -->
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="equipo_id" class="form-label">Equipo</label>
@@ -60,14 +60,12 @@
                     </div>
                     <div class="col-md-6">
                         <label for="costo_reparacion" class="form-label">Costo Reparación</label>
-                        <input type="number" step="0.01" name="costo_reparacion" id="costo_reparacion" class="form-control" required>
-                        @error('costo_reparacion')
-                            <small class="text-danger">{{ $message }}</small>
-                        @enderror
+                        <input type="number" step="0.01" name="costo_reparacion" id="costo_reparacion"
+                            class="form-control" readonly>
                     </div>
                 </div>
 
-                <!-- Status and Date -->
+                <!-- Estado y Fecha -->
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="estado" class="form-label">Estado</label>
@@ -90,10 +88,10 @@
                     </div>
                 </div>
 
-                <!-- Observations -->
+                <!-- Observaciones -->
                 <div class="row mb-3">
                     <div class="col-md-12">
-                        <label for="observaciones" class="form-label">Observaciones</label>
+                        <label for="observaciones" class="form-label">Descripción</label>
                         <textarea name="observaciones" id="observaciones" rows="3" class="form-control"></textarea>
                         @error('observaciones')
                             <small class="text-danger">{{ $message }}</small>
@@ -101,7 +99,17 @@
                     </div>
                 </div>
 
-                <!-- Submit and Cancel -->
+                <!-- Repuestos -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label">Repuestos</label>
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                            data-bs-target="#repuestosModal">Gestionar Repuestos</button>
+                        <input type="hidden" name="repuestos" id="repuestos">
+                    </div>
+                </div>
+
+                <!-- Botones -->
                 <div class="text-center">
                     <button type="submit" class="btn btn-success">Registrar</button>
                     <a href="{{ route('mantenimientos.index') }}" class="btn btn-secondary">Cancelar</a>
@@ -110,4 +118,156 @@
         </div>
     </div>
 </div>
+
+@include('mantenimientos.repuestosModal')
+
 @endsection
+
+@push('js')
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        cargarRepuestosExistentes();
+    });
+
+    let repuestosExistentes = [];
+    let repuestosVinculados = [];
+
+    // Cargar repuestos existentes
+    function cargarRepuestosExistentes() {
+        fetch("{{ route('api.mantenimientos.repuestos.get') }}")
+            .then(response => response.json())
+            .then(data => {
+                repuestosExistentes = data;
+                renderRepuestosExistentes();
+            })
+            .catch(error => console.error("Error al cargar repuestos:", error));
+    }
+
+    // Renderizar repuestos existentes
+    function renderRepuestosExistentes() {
+        const tbody = document.getElementById("repuestosExistentes");
+        tbody.innerHTML = "";
+
+        if (!repuestosExistentes.length) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center">No hay repuestos disponibles.</td></tr>';
+            return;
+        }
+
+        repuestosExistentes.forEach((repuesto, index) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${repuesto.descripcion}</td>
+                    <td>${parseFloat(repuesto.costo).toFixed(2)}</td>
+                    <td><button class="btn btn-info btn-sm" onclick="vincularRepuesto(${repuesto.id})">Vincular</button></td>
+                </tr>`;
+        });
+    }
+
+    // Vincular un repuesto
+    function vincularRepuesto(id) {
+        const repuesto = repuestosExistentes.find(r => r.id === id);
+        if (repuesto && !repuestosVinculados.some(r => r.id === id)) {
+            repuestosVinculados.push(repuesto);
+            renderRepuestosVinculados();
+        }
+    }
+
+    // Renderizar repuestos vinculados
+    function renderRepuestosVinculados() {
+        const tbody = document.getElementById("repuestosVinculados");
+        tbody.innerHTML = "";
+
+        if (!repuestosVinculados.length) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center">No hay repuestos vinculados.</td></tr>';
+            return;
+        }
+
+        repuestosVinculados.forEach((repuesto, index) => {
+            tbody.innerHTML += `
+                <tr>
+                    <td>${index + 1}</td>
+                    <td>${repuesto.descripcion}</td>
+                    <td><input type="number" class="form-control form-control-sm" value="${parseFloat(repuesto.costo).toFixed(2)}" onchange="editarCosto(${repuesto.id}, this.value)"></td>
+                    <td><button class="btn btn-danger btn-sm" onclick="desvincularRepuesto(${repuesto.id})">Desvincular</button></td>
+                </tr>`;
+        });
+
+        actualizarCostoReparacion();
+    }
+
+    // Editar el costo
+    function editarCosto(id, costo) {
+        const repuesto = repuestosVinculados.find(r => r.id === id);
+        if (repuesto) {
+            repuesto.costo = parseFloat(costo) || 0;
+            actualizarCostoReparacion();
+        }
+    }
+
+    // Actualizar el costo total
+    function actualizarCostoReparacion() {
+        const totalCosto = repuestosVinculados.reduce(
+            (sum, repuesto) => sum + parseFloat(repuesto.costo),
+            0
+        );
+        document.getElementById("costo_reparacion").value = totalCosto.toFixed(2);
+    }
+
+    // Desvincular un repuesto
+    function desvincularRepuesto(id) {
+        repuestosVinculados = repuestosVinculados.filter(r => r.id !== id);
+        renderRepuestosVinculados();
+    }
+
+    // Crear un nuevo repuesto
+    function crearRepuesto() {
+        const repuestoData = {
+            nro_parte: document.getElementById("nro_parte_repuesto").value,
+            nro_serie: document.getElementById("nro_serie_repuesto").value,
+            descripcion: document.getElementById("descripcion_repuesto").value,
+            observaciones: document.getElementById("observaciones_repuesto").value,
+            costo: parseFloat(document.getElementById("costo_repuesto").value),
+        };
+
+        // Validación básica
+        if (!repuestoData.descripcion || isNaN(repuestoData.costo)) {
+            alert("Por favor, completa los campos obligatorios.");
+            return;
+        }
+
+        fetch("{{ route('api.mantenimientos.repuestos.store') }}", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRF-TOKEN": "{{ csrf_token() }}",
+            },
+            body: JSON.stringify(repuestoData),
+        })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("No se pudo crear el repuesto.");
+                }
+                return response.json();
+            })
+            .then(repuesto => {
+                alert("Repuesto creado exitosamente.");
+                repuestosExistentes.push(repuesto);
+                renderRepuestosExistentes();
+                document.getElementById("nuevoRepuestoForm").reset(); // Limpiar el formulario
+            })
+            .catch(error => {
+                console.error("Error al crear el repuesto:", error);
+                alert("Ocurrió un error al crear el repuesto. Verifica los datos.");
+            });
+    }
+
+    // Preparar datos antes de enviar
+    document.getElementById("formMantenimiento").addEventListener("submit", function () {
+        document.getElementById("repuestos").value = JSON.stringify(repuestosVinculados);
+    });
+</script>
+
+@endpush

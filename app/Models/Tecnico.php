@@ -20,4 +20,8 @@ class Tecnico extends Model
     {
         return $this->hasMany(Mantenimiento::class);
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

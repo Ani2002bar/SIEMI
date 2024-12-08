@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('apellido', 50); // Campo para apellido con un máximo de 20 caracteres
             $table->string('correo', 200); // Campo para correo con un máximo de 200 caracteres
             $table->string('telefono', 20); // Campo para teléfono con un máximo de 20 caracteres
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamps(); // Crea columnas para 'created_at' y 'updated_at'
         });
     }

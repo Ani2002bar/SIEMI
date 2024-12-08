@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('descripcion', 200);
             $table->string('modelo', 50);
             $table->string('nro_serie', 50);
+            $table->string('marca', 50);
             $table->string('observaciones', 200)->nullable();
             $table->string('direccion_ip', 50)->nullable();
             $table->date('anio_fabricacion')->nullable();

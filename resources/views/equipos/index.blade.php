@@ -101,72 +101,49 @@
 <div class="card shadow mb-4">
     <div class="card-header py-3">
         <div class="filter-container">
-            <!-- Empresa Filter -->
+            <!-- Filtro por Empresa -->
             <div class="form-group">
                 <label for="empresa_id">Empresa</label>
                 <select name="empresa_id" id="empresa_id" class="form-control form-control-sm">
-                    <option value="">Todos</option>
-                    @foreach($empresas as $empresa)
-                        <option value="{{ $empresa->id }}" {{ request('empresa_id') == $empresa->id ? 'selected' : '' }}>
-                            {{ $empresa->nombre }}
-                        </option>
-                    @endforeach
-                </select>
+    <option value="">Todas</option>
+    @foreach($empresas as $empresa)
+        <option value="{{ $empresa->id }}">{{ $empresa->nombre }}</option>
+    @endforeach
+</select>
             </div>
 
-            <!-- Modalidad Filter -->
+            <!-- Filtro por Modalidad -->
             <div class="form-group">
                 <label for="modalidad_id">Modalidad</label>
                 <select name="modalidad_id" id="modalidad_id" class="form-control form-control-sm">
-                    <option value="">Todos</option>
+                    <option value="">Todas</option>
                     @foreach($modalidades as $modalidad)
-                        <option value="{{ $modalidad->id }}" {{ request('modalidad_id') == $modalidad->id ? 'selected' : '' }}>
-                            {{ $modalidad->nombre }}
-                        </option>
+                        <option value="{{ $modalidad->id }}">{{ $modalidad->nombre }}</option>
                     @endforeach
                 </select>
             </div>
 
-            <!-- Local Filter -->
+            <!-- Filtro por Local -->
             <div class="form-group">
                 <label for="local_id">Local</label>
                 <select name="local_id" id="local_id" class="form-control form-control-sm">
                     <option value="">Todos</option>
                     @foreach($locals as $local)
-                        <option value="{{ $local->id }}" {{ request('local_id') == $local->id ? 'selected' : '' }}>
-                            {{ $local->nombre_local }}
-                        </option>
+                        <option value="{{ $local->id }}">{{ $local->nombre_local }}</option>
                     @endforeach
                 </select>
             </div>
-
-            <!-- Departamento Filter -->
             <div class="form-group">
-                <label for="departamento_id">Departamento</label>
-                <select name="departamento_id" id="departamento_id" class="form-control form-control-sm">
+                <label for="estado">Estado</label>
+                <select name="estado" id="estado" class="form-control form-control-sm">
                     <option value="">Todos</option>
-                    @foreach($departamentos as $departamento)
-                        <option value="{{ $departamento->id }}" {{ request('departamento_id') == $departamento->id ? 'selected' : '' }}>
-                            {{ $departamento->nombre }}
-                        </option>
-                    @endforeach
+                    <option value="Activo">Activo</option>
+                    <option value="Inactivo">Inactivo</option>
                 </select>
             </div>
 
-            <!-- Subdepartamento Filter -->
-            <div class="form-group">
-                <label for="subdepartamento_id">Subdepartamento</label>
-                <select name="subdepartamento_id" id="subdepartamento_id" class="form-control form-control-sm">
-                    <option value="">Todos</option>
-                    @foreach($subdepartamentos as $subdepartamento)
-                        <option value="{{ $subdepartamento->id }}" {{ request('subdepartamento_id') == $subdepartamento->id ? 'selected' : '' }}>
-                            {{ $subdepartamento->nombre }}
-                        </option>
-                    @endforeach
-                </select>
-            </div>
 
-            <!-- Clear Filters Button -->
+            <!-- Botón para eliminar filtros -->
             <button type="button" id="clearFiltersButton" class="btn btn-secondary btn-sm">Eliminar filtros</button>
         </div>
     </div>
@@ -212,7 +189,8 @@
         </div>
     </div>
 </div>
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -243,120 +221,114 @@
     <script src="https://cdn.datatables.net/1.11.5/js/dataTables.bootstrap4.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-    <script>
-        $(document).ready(function () {
-            // Initialize DataTable
-            $('#dataTable').DataTable({
-                pageLength: 10,
-                lengthMenu: [5, 10, 25, 50],
-                language: {
-                    sProcessing: "Procesando...",
-                    sLengthMenu: "Mostrar _MENU_ registros",
-                    sZeroRecords: "No se encontraron resultados",
-                    sEmptyTable: "Ningún dato disponible en esta tabla",
-                    sInfo: "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
-                    sInfoEmpty: "Mostrando registros del 0 al 0 de un total de 0 registros",
-                    sInfoFiltered: "(filtrado de un total de _MAX_ registros)",
-                    sSearch: "Buscar:",
-                    oPaginate: {
-                        sFirst: "Primero",
-                        sLast: "Último",
-                        sNext: "Siguiente",
-                        sPrevious: "Anterior",
-                    },
-                },
-            });
+   
+<script>
+   $(document).ready(function () {
+    // Initialize DataTable
+    $('#dataTable').DataTable({
+        pageLength: 10,
+        lengthMenu: [5, 10, 25, 50],
+        language: {
+            sProcessing: "Procesando...",
+            sLengthMenu: "Mostrar _MENU_ registros",
+            sZeroRecords: "No se encontraron resultados",
+            sEmptyTable: "Ningún dato disponible en esta tabla",
+            sInfo: "Mostrando registros del _START_ al _END_ de un total de _TOTAL_ registros",
+            sInfoEmpty: "Mostrando registros del 0 al 0 de un total de 0 registros",
+            sInfoFiltered: "(filtrado de un total de _MAX_ registros)",
+            sSearch: "Buscar:",
+            oPaginate: {
+                sFirst: "Primero",
+                sLast: "Último",
+                sNext: "Siguiente",
+                sPrevious: "Anterior",
+            },
+        },
+    });
 
-            // Load filters from the URL on page load
-            loadFiltersFromUrl();
+    // Escuchar cambios en filtros
+    $('#empresa_id, #modalidad_id, #local_id, #estado').on('change', function () {
+        applyFilters();
+    });
 
-            // Event listeners for filter changes
-            $('#empresa_id, #modalidad_id, #local_id, #departamento_id, #subdepartamento_id').on('change', applyFilters);
+    // Botón para limpiar filtros
+    $('#clearFiltersButton').on('click', function () {
+        clearFilters();
+    });
+});
 
-            // Clear filters on button click
-            $('#clearFiltersButton').on('click', clearFilters);
+// Función para aplicar los filtros
+function applyFilters() {
+    const params = {
+        empresa_id: $('#empresa_id').val(),
+        modalidad_id: $('#modalidad_id').val(),
+        local_id: $('#local_id').val(),
+        estado: $('#estado').val(),
+    };
 
-            // Load dynamic options for departments and sub-departments
-            $('#local_id').on('change', function () {
-                loadDepartamentos($(this).val());
-            });
+    $.ajax({
+        url: "{{ route('equipos.index') }}",
+        method: "GET",
+        data: params,
+        success: function (response) {
+            updateTable(response.equipos);
+        },
+        error: function () {
+            console.error('Error al filtrar los datos.');
+        },
+    });
+}
 
-            $('#departamento_id').on('change', function () {
-                loadSubdepartamentos($(this).val());
-            });
+// Función para actualizar la tabla con los datos filtrados
+function updateTable(equipos) {
+    const tbody = $('#dataTable tbody');
+    tbody.empty();
+
+    if (equipos.length > 0) {
+        equipos.forEach(equipo => {
+            tbody.append(`
+            <tr>
+                <td>${equipo.descripcion}</td>
+                <td>${equipo.nro_serie}</td>
+                <td>${equipo.estado}</td>
+                <td>
+                    <div class="action-buttons">
+                        <a href="/equipos/${equipo.id}" class="btn btn-detalles btn-sm">
+                            <i class="fas fa-info-circle"></i> Detalles
+                        </a>
+                        <a href="/equipos/${equipo.id}/edit" class="btn btn-editar btn-sm">
+                            <i class="fas fa-edit"></i> Editar
+                        </a>
+                        <button type="button" class="btn btn-eliminar btn-sm" onclick="confirmDelete(${equipo.id})">
+                            <i class="fas fa-trash-alt"></i> Eliminar
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `);
         });
+    } else {
+        tbody.append('<tr><td colspan="4">No se encontraron equipos.</td></tr>');
+    }
+}
 
-        function loadFiltersFromUrl() {
-            // Parse query parameters from URL
-            const params = new URLSearchParams(window.location.search);
-            ['empresa_id', 'modalidad_id', 'local_id', 'departamento_id', 'subdepartamento_id'].forEach(filter => {
-                const value = params.get(filter);
-                if (value) {
-                    $(`#${filter}`).val(value);
-                }
-            });
+// Función para limpiar los filtros
+function clearFilters() {
+    $('#empresa_id, #modalidad_id, #local_id, #estado').val('');
+    applyFilters();
+}
 
-            // Trigger dependent dropdown loading if values exist
-            if ($('#local_id').val()) {
-                loadDepartamentos($('#local_id').val());
-            }
-            if ($('#departamento_id').val()) {
-                loadSubdepartamentos($('#departamento_id').val());
-            }
-        }
+// Función para confirmar la eliminación
+function confirmDelete(equipoId) {
+    const deleteForm = document.getElementById('deleteForm');
+    deleteForm.action = `/equipos/${equipoId}`;
+    const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
+    deleteModal.show();
+}
 
-        function loadDepartamentos(localId) {
-            const departamentoSelect = $('#departamento_id');
-            departamentoSelect.html('<option value="">Cargando...</option>');
-            if (localId) {
-                $.get(`/api/departamentos/${localId}`, function (data) {
-                    let options = '<option value="">Todos</option>';
-                    data.forEach(depto => options += `<option value="${depto.id}">${depto.nombre}</option>`);
-                    departamentoSelect.html(options);
-                });
-            } else {
-                departamentoSelect.html('<option value="">Todos</option>');
-            }
-        }
 
-        function loadSubdepartamentos(departamentoId) {
-            const subdepartamentoSelect = $('#subdepartamento_id');
-            subdepartamentoSelect.html('<option value="">Cargando...</option>');
-            if (departamentoId) {
-                $.get(`/api/subdepartamentos/${departamentoId}`, function (data) {
-                    let options = '<option value="">Todos</option>';
-                    data.forEach(subdepto => options += `<option value="${subdepto.id}">${subdepto.nombre}</option>`);
-                    subdepartamentoSelect.html(options);
-                });
-            } else {
-                subdepartamentoSelect.html('<option value="">Todos</option>');
-            }
-        }
-
-        function applyFilters() {
-            const params = {
-                empresa_id: $('#empresa_id').val(),
-                modalidad_id: $('#modalidad_id').val(),
-                local_id: $('#local_id').val(),
-                departamento_id: $('#departamento_id').val(),
-                subdepartamento_id: $('#subdepartamento_id').val(),
-            };
-
-            // Redirect with the selected filters as query parameters
-            const queryString = new URLSearchParams(params).toString();
-            window.location.href = `{{ route('equipos.index') }}?${queryString}`;
-        }
-
-        function clearFilters() {
-            // Clear all filters and reload the page
-            window.location.href = `{{ route('equipos.index') }}`;
-        }
-        function confirmDelete(equipoId) {
-            const deleteForm = document.getElementById('deleteForm');
-            deleteForm.action = `/equipos/${equipoId}`; // Asegúrate de que esta ruta coincida con tu ruta DELETE
-            const deleteModal = new bootstrap.Modal(document.getElementById('deleteModal'));
-            deleteModal.show();
-        }
     </script>
+
+
 
 @endpush

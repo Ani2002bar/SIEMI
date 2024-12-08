@@ -4,6 +4,13 @@
 
 @push('css')
     <link href="https://cdn.datatables.net/1.11.5/css/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <!-- Bootstrap 4 CSS -->
+<link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/css/bootstrap.min.css" rel="stylesheet">
+
+<!-- Bootstrap 4 JS -->
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.6.2/js/bootstrap.bundle.min.js"></script>
+
     <style>
         .action-buttons {
             display: flex;
@@ -47,34 +54,25 @@
 </div>
 
 <div class="card shadow mb-4">
-   
     <div class="card-body">
         <div class="table-responsive">
             <table class="table table-bordered table-striped fs-6" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                       
                         <th>Descripción</th>
                         <th>Observaciones</th>
                         <th>Costo</th>
-                        <th>Equipo Asociado</th>
-                        <th>Local Asociado</th>
                         <th>Acciones</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($repuestos as $repuesto)
+                    @forelse ($repuestos as $repuesto)
                         <tr>
-                           
                             <td>{{ $repuesto->descripcion }}</td>
                             <td>{{ $repuesto->observaciones }}</td>
                             <td>{{ number_format($repuesto->costo, 2) }}</td>
-                            <td>
-                                @foreach ($repuesto->equipos as $equipo)
-                                    {{ $equipo->descripcion }}
-                                @endforeach
-                            </td>
-                            <td>{{ $repuesto->local->nombre_local ?? 'N/A' }}</td>
+                            
+                            
                             <td>
                                 <div class="action-buttons">
                                     <!-- Botón Detalles -->
@@ -92,7 +90,11 @@
                                 </div>
                             </td>
                         </tr>
-                    @endforeach
+                    @empty
+                        <tr>
+                            <td colspan="6" class="text-center">No hay repuestos registrados</td>
+                        </tr>
+                    @endforelse
                 </tbody>
             </table>
         </div>
@@ -100,18 +102,21 @@
 </div>
 
 <!-- Modal de confirmación para eliminar repuesto -->
-<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
+<!-- Modal de confirmación para eliminar repuesto -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="deleteModalLabel">Mensaje de confirmación</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
             <div class="modal-body text-center">
                 ¿Seguro que quieres eliminar este repuesto?
             </div>
             <div class="modal-footer justify-content-center">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cerrar</button>
                 <form id="deleteForm" action="" method="POST" style="display: inline;">
                     @csrf
                     @method('DELETE')
@@ -121,6 +126,7 @@
         </div>
     </div>
 </div>
+
 @endsection
 
 @push('js')
