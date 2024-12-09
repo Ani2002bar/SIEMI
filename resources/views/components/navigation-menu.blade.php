@@ -27,92 +27,99 @@
         Módulos
     </div>
 
-    <!-- Nav Item - Mantenimientos y Calendario -->
+    <!-- Nav Item - Mantenimientos, Calendario y Equipos (para usuarios normales y administradores) -->
     <li class="nav-item">
         <a class="nav-link" href="{{ route('mantenimientos.index') }}">
             <i class="fas fa-clipboard-list"></i>
             <span>Mantenimientos</span>
         </a>
+    </li>
+    <li class="nav-item">
         <a class="nav-link" href="{{ route('calendar.index') }}">
             <i class="fas fa-calendar-alt"></i>
             <span>Calendario</span>
         </a>
     </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{{ route('equipos.index') }}">
+            <i class="fas fa-desktop"></i>
+            <span>Equipos</span>
+        </a>
+    </li>
 
     <!-- Sección solo visible para administradores -->
     @if (Auth::user()->hasRole('Administrador'))
+        <!-- Recursos -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseResources"
+                aria-expanded="true" aria-controls="collapseResources">
+                <i class="fas fa-boxes mr-2"></i>
+                <span>Recursos</span>
+            </a>
+            <div id="collapseResources" class="collapse" aria-labelledby="headingResources" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Gestiones</h6>
+                    <a class="collapse-item" href="{{ route('equipos.index') }}">
+                        <i class="fas fa-desktop mr-3"></i><span>Equipos</span>
+                    </a>
+                    <a class="collapse-item" href="{{ route('repuestos.index') }}">
+                        <i class="fas fa-cogs mr-3"></i><span>Repuestos</span>
+                    </a>
+                    <a class="collapse-item" href="{{ route('modalidades.index') }}">
+                        <i class="fas fa-clipboard-list mr-3"></i><span>Modalidades</span>
+                    </a>
+                    <a class="collapse-item" href="{{ route('componentes.index') }}">
+                        <i class="fas fa-cogs mr-3"></i><span>Componentes</span>
+                    </a>
+                    <a class="collapse-item" href="{{ route('subcomponentes.index') }}">
+                        <i class="fas fa-cogs mr-3"></i><span>Sub Componentes</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+
+        <!-- Técnicos -->
         <li class="nav-item">
             <a class="nav-link" href="{{ route('tecnicos.index') }}">
                 <i class="fas fa-clipboard-list"></i>
                 <span>Técnicos</span>
             </a>
         </li>
-    @endif
 
-    <!-- Usuarios (solo para administradores) -->
-    @if (Auth::user()->hasRole('Administrador'))
+        <!-- Usuarios -->
         <li class="nav-item">
             <a class="nav-link" href="{{ route('users.index') }}">
                 <i class="fas fa-users"></i>
                 <span>Usuarios</span>
             </a>
         </li>
+
+        <!-- Utilidades -->
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
+                aria-expanded="true" aria-controls="collapseUtilities">
+                <i class="fas fa-tools mr-2"></i>
+                <span>Utilidades</span>
+            </a>
+            <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <h6 class="collapse-header">Gestiones</h6>
+                    <a class="collapse-item" href="{{ route('locals.index') }}">
+                        <i class="fas fa-map-marker-alt mr-3"></i><span>Locales</span>
+                    </a>
+                    <a class="collapse-item" href="{{ route('empresas.index') }}">
+                        <i class="fas fa-building mr-3"></i><span>Empresas</span>
+                    </a>
+                    <a class="collapse-item" href="{{ route('departamentos.index') }}">
+                        <i class="fas fa-sitemap mr-3"></i><span>Departamentos</span>
+                    </a>
+                    <a class="collapse-item" href="{{ route('subdepartamentos.index') }}">
+                        <i class="fas fa-project-diagram mr-3"></i><span>SubDepartamentos</span>
+                    </a>
+                </div>
+            </div>
+        </li>
     @endif
-
-    <!-- Recursos -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseResources"
-            aria-expanded="true" aria-controls="collapseResources">
-            <i class="fas fa-boxes mr-2"></i>
-            <span>Recursos</span>
-        </a>
-        <div id="collapseResources" class="collapse" aria-labelledby="headingResources" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Gestiones</h6>
-                <a class="collapse-item" href="{{ route('equipos.index') }}">
-                    <i class="fas fa-desktop mr-3"></i><span>Equipos</span>
-                </a>
-                <a class="collapse-item" href="{{ route('repuestos.index') }}">
-                    <i class="fas fa-cogs mr-3"></i><span>Repuestos</span>
-                </a>
-                <a class="collapse-item" href="{{ route('modalidades.index') }}">
-                    <i class="fas fa-clipboard-list mr-3"></i><span>Modalidades</span>
-                </a>
-                <a class="collapse-item" href="{{ route('componentes.index') }}">
-                    <i class="fas fa-cogs mr-3"></i><span>Componentes</span>
-                </a>
-                <a class="collapse-item" href="{{ route('subcomponentes.index') }}">
-                    <i class="fas fa-cogs mr-3"></i><span>Sub Componentes</span>
-                </a>
-            </div>
-        </div>
-    </li>
-
-    <!-- Utilidades -->
-    <li class="nav-item">
-        <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
-            aria-expanded="true" aria-controls="collapseUtilities">
-            <i class="fas fa-tools mr-2"></i>
-            <span>Utilidades</span>
-        </a>
-        <div id="collapseUtilities" class="collapse" aria-labelledby="headingUtilities" data-parent="#accordionSidebar">
-            <div class="bg-white py-2 collapse-inner rounded">
-                <h6 class="collapse-header">Gestiones</h6>
-                <a class="collapse-item" href="{{ route('locals.index') }}">
-                    <i class="fas fa-map-marker-alt mr-3"></i><span>Locales</span>
-                </a>
-                <a class="collapse-item" href="{{ route('empresas.index') }}">
-                    <i class="fas fa-building mr-3"></i><span>Empresas</span>
-                </a>
-                <a class="collapse-item" href="{{ route('departamentos.index') }}">
-                    <i class="fas fa-sitemap mr-3"></i><span>Departamentos</span>
-                </a>
-                <a class="collapse-item" href="{{ route('subdepartamentos.index') }}">
-                    <i class="fas fa-project-diagram mr-3"></i><span>SubDepartamentos</span>
-                </a>
-            </div>
-        </div>
-    </li>
 
     <!-- Divider -->
     <hr class="sidebar-divider d-none d-md-block">

@@ -8,11 +8,14 @@ use Illuminate\Support\Facades\Auth;
 class LoginController extends Controller
 {
     /**
-     * Muestra el formulario de login.
+     * Muestra la vista de inicio de sesión.
      */
     public function index()
     {
-        return view('auth.login'); // Vista del login.
+        return response()
+            ->view('auth.login') // Vista del login
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache');
     }
 
     /**
@@ -23,16 +26,21 @@ class LoginController extends Controller
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
+        ], [
+            'email.required' => 'El correo electrónico es obligatorio.',
+            'email.email' => 'Debe ingresar un correo válido.',
+            'password.required' => 'La contraseña es obligatoria.',
         ]);
 
-        // Intenta autenticar al usuario.
         if (Auth::attempt($request->only('email', 'password'))) {
-            $request->session()->regenerate(); // Regenera la sesión por seguridad.
-            return redirect()->route('home.index')->with('success', 'Bienvenido de nuevo.');
+            $request->session()->regenerate();
+            return redirect()->route('home.index')->with('success', 'Inicio de sesión exitoso. Bienvenido.');
         }
 
         return back()->withErrors([
-            'email' => 'Las credenciales no coinciden con nuestros registros.',
+            'email' => 'Credenciales incorrectas. Por favor, intente de nuevo.',
+        ])->withInput([
+            'email' => $request->email, // Solo recordar el correo electrónico
         ]);
     }
 
@@ -42,9 +50,13 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         Auth::logout();
-        $request->session()->invalidate(); // Invalida la sesión actual.
-        $request->session()->regenerateToken(); // Regenera el token CSRF.
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-        return redirect()->route('login.index')->with('success', 'Has cerrado sesión exitosamente.');
+        return redirect()
+            ->route('login.index')
+            ->with('success', 'Sesión cerrada correctamente.')
+            ->header('Cache-Control', 'no-store, no-cache, must-revalidate, max-age=0')
+            ->header('Pragma', 'no-cache');
     }
 }

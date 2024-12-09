@@ -18,7 +18,6 @@ use App\Http\Controllers\UserManagementController;
 use App\Models\Equipo;
 use App\Models\Mantenimiento;
 
-
 // Página de error 404
 Route::get('/404', function () {
     return view('pages.404');
@@ -45,13 +44,12 @@ Route::middleware('auth')->group(function () {
     })->name('profile');
 
     // Panel general
-
     Route::get('/panel', function () {
         $totalEquipos = Equipo::count();
         $equiposInactivos = Equipo::where('estado', 'Inactivo')->count();
         $mantenimientosPendientes = Mantenimiento::where('estado', 'Pendiente')->count();
         $mantenimientosPendientesList = Mantenimiento::where('estado', 'Pendiente')->take(5)->get();
-    
+
         return view('panel.index', compact(
             'totalEquipos',
             'equiposInactivos',
@@ -59,10 +57,28 @@ Route::middleware('auth')->group(function () {
             'mantenimientosPendientesList'
         ));
     })->name('panel');
-    
-    
-    
-    
+
+    // Rutas generales para Administradores y Usuarios Normales
+    Route::middleware(['role_or_permission:Administrador|Usuario'])->group(function () {
+        // Rutas relacionadas con mantenimientos
+        Route::get('/mantenimientos/pdf/{id}', [MantenimientoController::class, 'generatePdf'])->name('mantenimientos.pdf');
+        Route::resource('mantenimientos', MantenimientoController::class);
+
+        // Rutas relacionadas con equipos
+        Route::get('/equipos/pdf', [EquipoController::class, 'generatePdf'])->name('equipos.pdf');
+        Route::resource('equipos', EquipoController::class);
+
+        // Rutas relacionadas con repuestos
+        Route::resource('repuestos', RepuestoController::class);
+        Route::get('/api/mantenimientos/repuestos', [MantenimientoController::class, 'getRepuestos'])->name('api.mantenimientos.repuestos.get');
+        Route::post('/api/mantenimientos/repuestos/filtered', [RepuestoController::class, 'getFilteredRepuestos'])->name('api.mantenimientos.repuestos.filtered');
+        Route::post('/repuestos', [MantenimientoController::class, 'storeRepuesto'])->name('api.mantenimientos.repuestos.store');
+        Route::delete('/api/repuestos/{repuesto}', [MantenimientoController::class, 'destroyRepuesto'])->name('api.repuestos.destroy');
+
+        // Calendario de mantenimientos
+        Route::get('/calendar', [MantenimientoController::class, 'calendar'])->name('calendar.index');
+    });
+
     // Rutas exclusivas para Administradores
     Route::middleware('role:Administrador')->group(function () {
         Route::get('/users', [UserManagementController::class, 'index'])->name('users.index');
@@ -72,61 +88,34 @@ Route::middleware('auth')->group(function () {
         Route::put('/users/{user}', [UserManagementController::class, 'update'])->name('users.update');
         Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy');
         Route::resource('tecnicos', TecnicoController::class); // Técnicos solo para Administradores
+
+        // Recursos generales
+        Route::resource('modalidades', ModalidadController::class);
+        Route::resource('locals', LocalController::class);
+        Route::resource('empresas', EmpresaController::class);
+        Route::resource('departamentos', DepartamentoController::class);
+        Route::resource('subdepartamentos', SubDepartamentoController::class);
+        Route::resource('componentes', ComponenteController::class);
+        Route::resource('subcomponentes', SubComponenteController::class);
+
+        // API para cargar datos dinámicamente
+        Route::post('/api/departamentos', [DepartamentoController::class, 'store'])->name('api.departamentos.store');
+        Route::post('/api/subdepartamentos', [SubDepartamentoController::class, 'store'])->name('api.subdepartamentos.store');
+        Route::get('/api/subdepartamentos/{departamentoId}', [SubDepartamentoController::class, 'getSubdepartamentos'])->name('api.subdepartamentos.get');
+        Route::get('/api/departamentos/{localId}', [DepartamentoController::class, 'getDepartamentos'])->name('api.departamentos.local');
+        Route::post('/api/empresas/store', [EmpresaController::class, 'store'])->name('empresas.store');
+        Route::delete('/api/empresas/{empresa}', [EmpresaController::class, 'destroy'])->name('empresas.destroy');
+        Route::get('/api/empresas', [EmpresaController::class, 'getExistingEmpresas'])->name('api.empresas.get');
+        Route::get('api/locals/get', [EmpresaController::class, 'getExistingLocales'])->name('api.locals.get');
+        Route::get('/locales/{local}/empresas', [LocalController::class, 'getEmpresas']);
     });
 
-    // Rutas generales para Administradores y Usuarios
-    Route::middleware(['role_or_permission:Administrador|Usuario'])->group(function () {
-        Route::get('/equipos/pdf', [EquipoController::class, 'generatePdf'])->name('equipos.pdf');
-        Route::resource('equipos', EquipoController::class);
-        Route::resource('mantenimientos', MantenimientoController::class);
-        Route::get('/dashboard', function () {
-            return view('dashboard.index');
-        })->name('dashboard.index');
-    });
-
-    // Recursos generales
-    Route::resource('modalidades', ModalidadController::class);
-    Route::resource('locals', LocalController::class);
-    Route::resource('empresas', EmpresaController::class);
-
-
-
-    Route::resource('repuestos', RepuestoController::class);
-    Route::resource('departamentos', DepartamentoController::class);
-    Route::resource('subdepartamentos', SubDepartamentoController::class);
-    Route::resource('componentes', ComponenteController::class);
-    Route::resource('subcomponentes', SubComponenteController::class);
-
-    // API para cargar datos dinámicamente
-    Route::post('/api/departamentos', [DepartamentoController::class, 'store'])->name('api.departamentos.store');
-    Route::post('/api/subdepartamentos', [SubDepartamentoController::class, 'store'])->name('api.subdepartamentos.store');
-    Route::get('/api/subdepartamentos/{departamentoId}', [SubDepartamentoController::class, 'getSubdepartamentos'])->name('api.subdepartamentos.get');
-    Route::get('/api/departamentos/{localId}', [DepartamentoController::class, 'getDepartamentos'])->name('api.departamentos.local');
-    Route::post('/api/empresas/store', [EmpresaController::class, 'store'])->name('empresas.store');
-    Route::delete('/api/empresas/{empresa}', [EmpresaController::class, 'destroy'])->name('empresas.destroy');
-    Route::get('/api/empresas', [EmpresaController::class, 'getExistingEmpresas'])->name('api.empresas.get');
-    Route::get('api/locals/get', [EmpresaController::class, 'getExistingLocales'])->name('api.locals.get');
-    Route::get('/locales/{local}/empresas', [LocalController::class, 'getEmpresas']);
-
-    // Funcionalidades específicas de mantenimiento
+    // API y funcionalidades específicas de mantenimiento
     Route::get('/mantenimientos/calendario', [MantenimientoController::class, 'calendar'])->name('mantenimientos.calendario');
     Route::get('/mantenimientos/calendar', [MantenimientoController::class, 'calendar'])->name('mantenimientos.calendar');
-    Route::get('/calendar', [MantenimientoController::class, 'calendar'])->name('calendar.index');
-    Route::get('/mantenimientos/pdf/{id}', [MantenimientoController::class, 'generatePdf'])->name('mantenimientos.pdf');
-
-    // Repuestos: API y gestión
-    Route::get('/api/mantenimientos/repuestos', [MantenimientoController::class, 'getRepuestos'])->name('api.mantenimientos.repuestos.get');
-    Route::post('/repuestos', [MantenimientoController::class, 'storeRepuesto'])->name('api.mantenimientos.repuestos.store');
-
-    Route::delete('/api/repuestos/{repuesto}', [MantenimientoController::class, 'destroyRepuesto'])->name('api.repuestos.destroy');
-    Route::post('/api/mantenimientos/repuestos/filtered', [RepuestoController::class, 'getFilteredRepuestos'])->name('api.mantenimientos.repuestos.filtered');
-
-    // Rutas para componentes y subcomponentes
     Route::post('/api/componentes', [ComponenteController::class, 'storeFromModal'])->name('api.componentes.store');
     Route::get('/equipos/{equipoId}/componentes', [EquipoController::class, 'getComponentes'])->name('equipos.getComponentes');
     Route::post('/api/subcomponentes', [SubComponenteController::class, 'storeFromModal'])->name('api.subcomponentes.store');
     Route::get('/api/subcomponentes/{componenteId}', [SubComponenteController::class, 'getByComponente'])->name('api.subcomponentes.getByComponente');
-
     Route::get('/equipos', [EquipoController::class, 'index'])->name('equipos.index');
-    
 });
